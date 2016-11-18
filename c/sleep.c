@@ -87,12 +87,21 @@ void	sleep( pcb *p, unsigned int len ) {
 extern void	tick( void ) {
 /****************************/
 
+	//increment tickCount for current process
+	getCurrentProcess()->tickCount++;
+	//kprintf("currenTicksInTick:%d ",getCurrentProcess()->tickCount);
+	kprintf("%d.", getCurrentProcess()->pid);
     pcb	*tmp;
 
     if( !sleepQ ) {
         return;
     }
 
+    //initially subtracts from sleepdiff in head
+    //if the queue has something, and sleepdiff is 0 for a process in the queue
+    //get it ready, loop for next sleepdiff in sleepqueue
+    //this is for the case if there are multiple 0 values linked on the queue
+    //pretty clever
     for( sleepQ->sleepdiff--; sleepQ && !sleepQ->sleepdiff; ) {
         tmp = sleepQ;
         sleepQ = tmp->next;
@@ -107,12 +116,28 @@ extern void	tick( void ) {
 
 //returns the number of ticks a process has consumed so far
 int getticks(int pid){
-	//if process no longer exists, return -1
+	//get the process
+	pcb *p = findPCB(pid);
+	pcb *pCurrent = getCurrentProcess();
+
 
 	//if pid == -1, give ticks by current process
-
+	if(pid == -1){
+		return pCurrent->tickCount;
+	}
 	//if pid == 0, give ticks by idle process
+	if(pid == 0){
+		p = findPCB(getIdlePID());
+		return p->tickCount;
+	}
 
-	return 0;
+	//if process no longer exists, return -1
+	if(!p) {
+		return -1;
+	}
+
+	//kprintf("tickcountINgetTicks:%d ", p->tickCount);
+	return p->tickCount;
+
 }
 

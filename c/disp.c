@@ -8,11 +8,11 @@
 
 static pcb *head = NULL;
 static pcb *tail = NULL;
+pcb *p;
 
 void dispatch(void) {
 	/********************************/
 
-	pcb *p;
 	int r;
 	funcptr fp;
 	int stack;
@@ -135,3 +135,8 @@ extern pcb *findPCB(int pid) {
 
 	return (NULL);
 }
+
+pcb* getCurrentProcess(){
+	return p;
+}
+

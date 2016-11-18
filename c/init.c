@@ -8,7 +8,7 @@ extern	int	entry( void );  /* start of kernel image, use &start    */
 extern	int	end( void );    /* end of kernel image, use &end        */
 extern  long	freemem; 	/* start of free memory (set in i386.c) */
 extern char	*maxaddr;	/* max memory address (set in i386.c)	*/
-
+int idlePID;
 
 
 /*------------------------------------------------------------------------
@@ -67,7 +67,7 @@ void initproc( void )				/* The beginning */
   // CPU resources that could be used by user processes.
 
   kprintf("Creating Idle Process\n");
-  create(idleproc, PROC_STACK);
+  idlePID = create(idleproc, PROC_STACK);
   
   create( root, PROC_STACK );
   kprintf("create inited\n");
@@ -81,3 +81,6 @@ void initproc( void )				/* The beginning */
   for(;;) ; /* loop forever */
 }
 
+int getIdlePID(){
+	return idlePID;
+}

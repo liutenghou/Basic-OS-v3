@@ -80,6 +80,7 @@ int create( funcptr fp, size_t stackSize ) {
     p->esp = (unsigned long*)cf;
     p->state = STATE_READY;
     p->pid = nextpid++;
+    p->tickCount = 0;
 
     ready( p );
     return p->pid;

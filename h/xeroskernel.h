@@ -87,7 +87,8 @@ struct struct_pcb {
   unsigned int otherpid;
   void        *buffer;
   int          bufferlen;
-  int          sleepdiff;
+  int          sleepdiff; //remaining time to sleep if in sleepqueue
+  unsigned long tickCount; //how many ticks a process has used
 };
 
 
@@ -140,6 +141,8 @@ int      syscall(int call, ...);  /* Used in the system call stub */
 void     sleep(pcb *, unsigned int);
 void     tick( void );
 int getticks(int pid);
+pcb* getCurrentProcess();
+int getIdlePID();
 
 
 /* Function prototypes for system calls as called by the application */
