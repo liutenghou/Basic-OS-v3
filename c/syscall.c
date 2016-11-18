@@ -64,3 +64,8 @@ unsigned int syssleep( unsigned int t ) {
     return syscall( SYS_SLEEP, t );
 }
 
+int sysgetcputime(int pid){
+	return syscall(SYS_CPUTIME, pid);
+}
+
+

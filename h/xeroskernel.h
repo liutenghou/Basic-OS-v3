@@ -69,6 +69,7 @@ void           outb(unsigned int, unsigned char);
 #define SYS_GETPID      144
 #define SYS_PUTS        155
 #define SYS_SLEEP       166
+#define SYS_CPUTIME		167
 
 /* Structure to track the information associated with a single process */
 
@@ -138,6 +139,7 @@ void     printCF (void * stack);  /* print the call frame */
 int      syscall(int call, ...);  /* Used in the system call stub */
 void     sleep(pcb *, unsigned int);
 void     tick( void );
+int getticks(int pid);
 
 
 /* Function prototypes for system calls as called by the application */
@@ -147,6 +149,7 @@ void         sysstop( void );
 unsigned int sysgetpid( void );
 unsigned int syssleep(unsigned int);
 void     sysputs(char *str);
+int sysgetcputime(int pid);
 
 /* The initial process that the system creates and schedules */
 void     root( void );

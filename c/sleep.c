@@ -104,3 +104,15 @@ extern void	tick( void ) {
         ready( tmp );
     }
 }
+
+//returns the number of ticks a process has consumed so far
+int getticks(int pid){
+	//if process no longer exists, return -1
+
+	//if pid == -1, give ticks by current process
+
+	//if pid == 0, give ticks by idle process
+
+	return 0;
+}
+
