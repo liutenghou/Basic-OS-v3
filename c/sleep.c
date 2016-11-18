@@ -87,10 +87,7 @@ void	sleep( pcb *p, unsigned int len ) {
 extern void	tick( void ) {
 /****************************/
 
-	//increment tickCount for current process
-	getCurrentProcess()->tickCount++;
-	//kprintf("currenTicksInTick:%d ",getCurrentProcess()->tickCount);
-	kprintf("%d.", getCurrentProcess()->pid);
+
     pcb	*tmp;
 
     if( !sleepQ ) {

@@ -22,7 +22,9 @@ void dispatch(void) {
 	int pid;
 
 	for (p = next(); p;) {
-		//      kprintf("Process %x selected stck %x\n", p, p->esp);
+		//      kprintf("Process %x selected stck %x\n", p->pid, p->esp);
+		//increment tick count (cpu usage) for process
+		p->tickCount++;
 
 		r = contextswitch(p);
 		switch (r) {
