@@ -57,6 +57,7 @@ void     dispatch( void ) {
 	break;
       case( SYS_TIMER ):
 	tick();
+	p->cpuTime++;
 	ready( p );
 	p = next();
 	end_of_intr();

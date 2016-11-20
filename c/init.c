@@ -58,15 +58,19 @@ void initproc( void )				/* The beginning */
   contextinit();
   kprintf("context inited\n");
   
+
+  // WARNING THE FIRST PROCESS CREATED MUST BE THE IDLE PROCESS.
+  // See comments in create.c
   
   // Note that this idle process gets a regular time slice but
   // according to the A2 specs it should only get a time slice when
   // there are no other processes available to run. This approach 
   // works, but will give the idle process a time slice when other 
-  // processes are available for execution and thereby needless waste
-  // CPU resources that could be used by user processes.
-
+  // processes are available for execution and thereby needlessly waste
+  // CPU resources that could be used by user processes. This is 
+  // somewhat migigated by the immediate call to sysyield()
   kprintf("Creating Idle Process\n");
+
   create(idleproc, PROC_STACK);
   
   create( root, PROC_STACK );

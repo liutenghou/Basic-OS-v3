@@ -87,6 +87,7 @@ struct struct_pcb {
   void        *buffer;
   int          bufferlen;
   int          sleepdiff;
+  long         cpuTime;  /* CPU time  consumed                    */
 };
 
 

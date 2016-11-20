@@ -11,8 +11,13 @@ pcb     proctab[MAX_PROC];
 #define ARM_INTERRUPTS          0x00000200
 
 
-// PIDs can't start at 0 nor can they be negative
-static int      nextpid = 1;
+
+// Another bit of a hack. Th PID value of 0 is reserved for the 
+// NULL/idle process. The underlying assumption is that the 
+// idle process will be the first process created. IF that isn't
+// the case the system will break. 
+
+static int      nextpid = 0;
 
 
 
@@ -51,10 +56,10 @@ int create( funcptr fp, size_t stackSize ) {
     }
     
     //    Some stuff to help wih debugging
-    //    char buf[100];
-    //    sprintf(buf, "Slot %d empty\n", i);
-    //    kprintf(buf);
-    //    kprintf("Slot %d empty\n", i);
+        char buf[100];
+        sprintf(buf, "Slot %d empty\n", i);
+        kprintf(buf);
+        kprintf("Slot %d empty\n", i);
     
     if( !p ) {
         return CREATE_FAILURE;
@@ -80,7 +85,7 @@ int create( funcptr fp, size_t stackSize ) {
     p->esp = (unsigned long*)cf;
     p->state = STATE_READY;
     p->pid = nextpid++;
-
+    p->cpuTime = 0;
     ready( p );
     return p->pid;
 }
