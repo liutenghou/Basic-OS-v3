@@ -96,7 +96,6 @@ struct struct_pcb {
 
 typedef struct struct_ps processStatuses;
 struct struct_ps {
-  int  entries;            // Last entry used in the table
   int  pid[MAX_PROC];      // The process ID
   int  status[MAX_PROC];   // The process status
   long  cpuTime[MAX_PROC]; // CPU time used in milliseconds
