@@ -54,12 +54,14 @@ void           outb(unsigned int, unsigned char);
 #define TIMER_INT      (TIMER_IRQ + 32)
    /* Minimum size of a stack when a process is created */
 #define PROC_STACK      (4096 * 4)    
-                      
+   /* Number of milliseconds in a tick */
+#define MILLISECONDS_TICK 10                      
 
 /* Constants to track states that a process is in */
 #define STATE_STOPPED   0
 #define STATE_READY     1
 #define STATE_SLEEP     22
+#define STATE_RUNNING   23
 
 /* System call identifiers */
 #define SYS_STOP        10
@@ -69,6 +71,8 @@ void           outb(unsigned int, unsigned char);
 #define SYS_GETPID      144
 #define SYS_PUTS        155
 #define SYS_SLEEP       166
+#define SYS_KILL        177
+#define SYS_CPUTIMES    178
 
 /* Structure to track the information associated with a single process */
 
@@ -89,6 +93,16 @@ struct struct_pcb {
   int          sleepdiff;
   long         cpuTime;  /* CPU time  consumed                    */
 };
+
+typedef struct struct_ps processStatuses;
+struct struct_ps {
+  int  entries;            // Last entry used in the table
+  int  pid[MAX_PROC];      // The process ID
+  int  status[MAX_PROC];   // The process status
+  long  cpuTime[MAX_PROC]; // CPU time used in milliseconds
+};
+
+
 
 
 /* The actual space is set aside in create.c */
@@ -138,8 +152,9 @@ void     set_evec(unsigned int xnum, unsigned long handler);
 void     printCF (void * stack);  /* print the call frame */
 int      syscall(int call, ...);  /* Used in the system call stub */
 void     sleep(pcb *, unsigned int);
+void     removeFromSleep(pcb * p);
 void     tick( void );
-
+int      getCPUtimes(pcb * p, processStatuses *ps);
 
 /* Function prototypes for system calls as called by the application */
 int          syscreate( funcptr fp, size_t stack );
@@ -147,7 +162,9 @@ void         sysyield( void );
 void         sysstop( void );
 unsigned int sysgetpid( void );
 unsigned int syssleep(unsigned int);
-void     sysputs(char *str);
+void         sysputs(char *str);
+int          syskill(int pcb);
+int          sysgetcputimes(processStatuses *ps);
 
 /* The initial process that the system creates and schedules */
 void     root( void );

@@ -56,10 +56,10 @@ int create( funcptr fp, size_t stackSize ) {
     }
     
     //    Some stuff to help wih debugging
-        char buf[100];
-        sprintf(buf, "Slot %d empty\n", i);
-        kprintf(buf);
-        kprintf("Slot %d empty\n", i);
+    //    char buf[100];
+    //    sprintf(buf, "Slot %d empty\n", i);
+    //    kprintf(buf);
+    //    kprintf("Slot %d empty\n", i);
     
     if( !p ) {
         return CREATE_FAILURE;
@@ -71,6 +71,7 @@ int create( funcptr fp, size_t stackSize ) {
         return CREATE_FAILURE;
     }
 
+    // The -4 gets us one extra stack spot for the return address
     cf = (context_frame *)((unsigned char *)cf + stackSize - 4);
     cf--;
 
@@ -82,6 +83,7 @@ int create( funcptr fp, size_t stackSize ) {
 
     cf->esp = (int)(cf + 1);
     cf->ebp = cf->esp;
+    cf->stackSlots[0] = (int) sysstop;
     p->esp = (unsigned long*)cf;
     p->state = STATE_READY;
     p->pid = nextpid++;

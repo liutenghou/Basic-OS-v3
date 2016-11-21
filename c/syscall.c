@@ -64,3 +64,10 @@ unsigned int syssleep( unsigned int t ) {
     return syscall( SYS_SLEEP, t );
 }
 
+int syskill(int pid) {
+  return syscall(SYS_KILL, pid);
+}
+
+int sysgetcputimes(processStatuses *ps) {
+  return syscall(SYS_CPUTIMES, ps);
+}
