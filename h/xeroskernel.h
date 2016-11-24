@@ -153,6 +153,7 @@ unsigned int sysgetpid( void );
 unsigned int syssleep(unsigned int);
 void     sysputs(char *str);
 int sysgetcputime(int pid);
+int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(void *));
 
 /* The initial process that the system creates and schedules */
 void     root( void );

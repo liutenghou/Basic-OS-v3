@@ -68,4 +68,8 @@ int sysgetcputime(int pid){
 	return syscall(SYS_CPUTIME, pid);
 }
 
+int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(void *)){
+	//todo
+	return 0;
+}
 
