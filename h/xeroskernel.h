@@ -73,6 +73,11 @@ void           outb(unsigned int, unsigned char);
 #define SYS_SLEEP       166
 #define SYS_KILL        177
 #define SYS_CPUTIMES    178
+#define SYS_OPEN		179
+#define SYS_CLOSE		180
+#define SYS_WRITE		181
+#define SYS_READ		182
+#define SYS_OICTL		183
 
 /* Structure to track the information associated with a single process */
 
@@ -155,8 +160,10 @@ void     removeFromSleep(pcb * p);
 void     tick( void );
 pcb* getCurrentProcess(void);
 int getIdlePID(void);
-
 int      getCPUtimes(pcb * p, processStatuses *ps);
+//device drivers kernel
+int di_open(int devNo);
+int di_close(int fd);
 
 /* Function prototypes for system calls as called by the application */
 int          syscreate( funcptr fp, size_t stack );
@@ -169,6 +176,12 @@ int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(v
 void         sysputs(char *str);
 int          syskill(int pcb);
 int          sysgetcputimes(processStatuses *ps);
+//device drivers syscall
+￼extern int sysopen(int device_no);
+int sysclose(int fd);
+extern int syswrite(int fd, void *buff, int bufflen);
+extern int sysread(int fd, void *buff, int bufflen);
+extern int sysioctl(int fd, unsigned long command, ...);
 
 /* The initial process that the system creates and schedules */
 void     root( void );
