@@ -6,7 +6,7 @@
 #include <xeroslib.h>
 
 
-#define MILLISECONDS_TICK 10
+
 static pcb	*sleepQ;
 
 
@@ -83,8 +83,48 @@ void	sleep( pcb *p, unsigned int len ) {
     }
 }
 
+void removeFromSleep(pcb * p) {
 
-extern void	tick( void ) {
+  if (!sleepQ) {
+    kprintf("Sleep queue corrupt, empty when it shouldn't be\n");
+    return;
+  }
+
+  if (sleepQ == p) { // At front of list
+    sleepQ = p->next;
+    if (sleepQ != NULL) { // adjust sleep time
+      kprintf("Sleep values are %d %d\n", sleepQ->sleepdiff, p->sleepdiff);
+      sleepQ->sleepdiff = sleepQ->sleepdiff +  p->sleepdiff;
+      kprintf("Front sleeping process %d for %d\n", sleepQ->pid, sleepQ->sleepdiff);
+    } else {
+      kprintf("Only thing on sleep q\n");
+    }
+  } else {  // Not at front, find the process.
+    pcb * prev = sleepQ;
+    pcb * curr;
+    
+    for (curr = sleepQ->next; curr!=NULL; curr = curr->next) {
+      if (curr == p) { // Found process so remove it
+	prev->next = p->next;
+	if (prev->next != NULL) {
+	  prev->next->sleepdiff = prev->next->sleepdiff +  p->sleepdiff;
+	  kprintf("Sleeping pid %d differential %d\n", prev->next->pid, prev->next->sleepdiff);
+	  p->next = NULL; // just to clean things up
+	} else {
+	  kprintf("Sleeping %d was last process on list\n", curr->pid);
+	}
+	break;
+      }
+      prev = curr;
+    }
+    if (curr == NULL) {
+      kprintf("Sleep queue corrupt, process claims on queue and not found\n");
+      
+    }
+  }
+}
+
+extern void tick( void ) {
 /****************************/
 
 
@@ -109,32 +149,5 @@ extern void	tick( void ) {
         tmp->ret = 0;
         ready( tmp );
     }
-}
-
-//returns the number of ticks a process has consumed so far
-int getticks(int pid){
-	//get the process
-	pcb *p = findPCB(pid);
-	pcb *pCurrent = getCurrentProcess();
-
-
-	//if pid == -1, give ticks by current process
-	if(pid == -1){
-		return pCurrent->tickCount;
-	}
-	//if pid == 0, give ticks by idle process
-	if(pid == 0){
-		p = findPCB(getIdlePID());
-		return p->tickCount;
-	}
-
-	//if process no longer exists, return -1
-	if(!p) {
-		return -1;
-	}
-
-	//kprintf("tickcountINgetTicks:%d ", p->tickCount);
-	return p->tickCount;
-
 }
 

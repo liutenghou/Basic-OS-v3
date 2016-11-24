@@ -64,12 +64,17 @@ unsigned int syssleep( unsigned int t ) {
     return syscall( SYS_SLEEP, t );
 }
 
-int sysgetcputime(int pid){
-	return syscall(SYS_CPUTIME, pid);
-}
+
 
 int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(void *)){
 	//todo
 	return 0;
 }
 
+int syskill(int pid) {
+  return syscall(SYS_KILL, pid);
+}
+
+int sysgetcputimes(processStatuses *ps) {
+  return syscall(SYS_CPUTIMES, ps);
+}
