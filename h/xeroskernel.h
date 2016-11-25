@@ -77,7 +77,10 @@ void           outb(unsigned int, unsigned char);
 #define SYS_CLOSE		180
 #define SYS_WRITE		181
 #define SYS_READ		182
-#define SYS_OICTL		183
+#define SYS_IOCTL		183
+//signals
+#define SYS_SIGHANDLER	184
+
 
 /* Structure to track the information associated with a single process */
 
@@ -96,6 +99,7 @@ struct struct_pcb {
   void        *buffer;
   int          bufferlen;
   int          sleepdiff;
+  unsigned int tickCount;
   long         cpuTime;  /* CPU time  consumed                    */
 };
 
@@ -177,11 +181,14 @@ void         sysputs(char *str);
 int          syskill(int pcb);
 int          sysgetcputimes(processStatuses *ps);
 //device drivers syscall
-￼extern int sysopen(int device_no);
+extern int sysopen(int device_no);
 int sysclose(int fd);
 extern int syswrite(int fd, void *buff, int bufflen);
 extern int sysread(int fd, void *buff, int bufflen);
 extern int sysioctl(int fd, unsigned long command, ...);
+
+//signals
+int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(void *));
 
 /* The initial process that the system creates and schedules */
 void     root( void );

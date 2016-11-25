@@ -151,3 +151,30 @@ extern void tick( void ) {
     }
 }
 
+
+//returns the number of ticks a process has consumed so far
+int getticks(int pid){
+	//get the process
+	pcb *p = findPCB(pid);
+	pcb *pCurrent = getCurrentProcess();
+
+
+	//if pid == -1, give ticks by current process
+	if(pid == -1){
+		return pCurrent->tickCount;
+	}
+	//if pid == 0, give ticks by idle process
+	if(pid == 0){
+		p = findPCB(getIdlePID());
+		return p->tickCount;
+	}
+
+	//if process no longer exists, return -1
+	if(!p) {
+		return -1;
+	}
+
+	//kprintf("tickcountINgetTicks:%d ", p->tickCount);
+	return p->tickCount;
+
+}

@@ -103,7 +103,9 @@ void dispatch(void) {
 			fd = va_arg(ap, int);
 
 			break;
-
+		case(SYS_SIGHANDLER):
+			//todo: continue here
+			break;
 		default:
 			kprintf("Bad Sys request %d, pid = %d\n", r, p->pid);
 		}
@@ -345,3 +347,4 @@ int di_close(int fd) {
 	//else return success
 	return 0;
 }
+

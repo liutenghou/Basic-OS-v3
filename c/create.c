@@ -88,6 +88,7 @@ int create( funcptr fp, size_t stackSize ) {
     p->state = STATE_READY;
     p->pid = nextpid++;
     p->cpuTime = 0;
+    p->tickCount = 0;
     ready( p );
     return p->pid;
 }
