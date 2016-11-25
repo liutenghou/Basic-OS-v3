@@ -97,7 +97,8 @@ struct struct_pcb {
   int          ret;    /* Return value of system call             */
                        /* if process interrupted because of system*/
                        /* call                                    */
-  long         args;   
+  long         args;
+  int	validProcess;
   unsigned int otherpid;
   void        *buffer;
   int          bufferlen;
@@ -105,7 +106,7 @@ struct struct_pcb {
   unsigned int tickCount;
   long         cpuTime;  /* CPU time  consumed                    */
 
-  //signals
+  //signals, ordered by priority
   void* signaltable[MAX_SIGNALS]; //signal table, for what to do when a signal is sent to the process
 };
 

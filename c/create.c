@@ -89,6 +89,10 @@ int create( funcptr fp, size_t stackSize ) {
     p->pid = nextpid++;
     p->cpuTime = 0;
     p->tickCount = 0;
+    p->validProcess = 1010101;
+    //initialize signal table
+    memset(p->signaltable, 0, sizeof(p->signaltable));
+
     ready( p );
     return p->pid;
 }

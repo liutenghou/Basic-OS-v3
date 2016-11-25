@@ -141,12 +141,13 @@ void     root( void ) {
    
     proc_pid = syscreate(&busy, 1024);
     con_pid = syscreate(&busy, 1024);
+    syssighandler(12, &producer, 0);
     sysyield();
     syskill(proc_pid);
     sysyield();
     syskill(con_pid);
 
-    
+    /*
     for(i = 0; i < 5; i++) {
       pids[i] = syscreate(&busy, 1024);
     }
@@ -266,6 +267,9 @@ void     root( void ) {
 
     sprintf(buff, "Root finished\n");
     sysputs( buff );
+
+    */
+
     sysstop();
     
     for( ;; ) {

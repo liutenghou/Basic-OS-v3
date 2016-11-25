@@ -1,3 +1,4 @@
+
 Press F12 for boot menu.
 
 Booting from Floppy...
@@ -7,7 +8,7 @@ Loading........
 
 CPSC 415, 2016W1
 32 Bit Xeros 0.01
-Located at: 0 to 5548
+Located at: 0 to 8748
 Max addr is 4194303 3fffff
 memory inited
 dispatcher inited
@@ -16,10 +17,9 @@ context inited
 Creating Idle Process
 create inited
 Root has been called
-rootTicks:300 Proc pid = 3 Con pid = 4
-Root finished
-Producer 1 and in hex 0 1 ticks:0
-Consumer 0 ticks:0
-Producer 2 and in hex 1 2 ticks:0
-Consumer 1 ticks:0
+*SIGHANDLER*12*7716*VALID:1170735103 My pid is 2
+My pid is 3
+Current pid 1 Killing 2
+My pid is 3
+Current pid 1 Killing 3
 ß
