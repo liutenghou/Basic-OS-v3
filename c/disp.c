@@ -345,6 +345,8 @@ int getCPUtimes(pcb *p, processStatuses *ps) {
 
 //device drivers
 int di_open(int devNo) {
+	kprintf("DI_OPEN ");
+
 	//returns -1 if fail
 
 	//returns filedescriptor 0-3 if success
