@@ -55,7 +55,10 @@ void           outb(unsigned int, unsigned char);
    /* Minimum size of a stack when a process is created */
 #define PROC_STACK      (4096 * 4)    
    /* Number of milliseconds in a tick */
-#define MILLISECONDS_TICK 10                      
+#define MILLISECONDS_TICK 10
+
+//A3
+#define MAX_SIGNALS	32
 
 /* Constants to track states that a process is in */
 #define STATE_STOPPED   0
@@ -101,6 +104,9 @@ struct struct_pcb {
   int          sleepdiff;
   unsigned int tickCount;
   long         cpuTime;  /* CPU time  consumed                    */
+
+  //signals
+  void* signaltable[MAX_SIGNALS]; //signal table, for what to do when a signal is sent to the process
 };
 
 typedef struct struct_ps processStatuses;
@@ -168,6 +174,9 @@ int      getCPUtimes(pcb * p, processStatuses *ps);
 //device drivers kernel
 int di_open(int devNo);
 int di_close(int fd);
+//signals kernel side
+int sighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(void *));
+
 
 /* Function prototypes for system calls as called by the application */
 int          syscreate( funcptr fp, size_t stack );

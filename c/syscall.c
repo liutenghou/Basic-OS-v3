@@ -68,8 +68,6 @@ unsigned int syssleep( unsigned int t ) {
 
 int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(void *)){
 	return syscall(SYS_SIGHANDLER, signal, newhandler, oldHandler);
-	//todo
-	return 0;
 }
 
 int syskill(int pid) {

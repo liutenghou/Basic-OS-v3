@@ -25,6 +25,11 @@ void dispatch(void) {
 	int devNo;
 	int fd;
 
+	//signal
+	int signal;
+	void* newhandler;
+	void* oldhandler;
+
 	for (p = next(); p;) {
 		//      kprintf("Process %x selected stck %x\n", p, p->esp);
 
@@ -104,7 +109,13 @@ void dispatch(void) {
 
 			break;
 		case(SYS_SIGHANDLER):
-			//todo: continue here
+			ap = (va_list) p->args;
+			//args: signal, newhandler, oldhandler
+			signal = va_arg(ap, int);
+			newhandler = va_arg(ap, void*);
+			oldhandler = va_arg(ap, void*);
+			p->ret = sighandler(signal, newhandler, oldhandler);
+
 			break;
 		default:
 			kprintf("Bad Sys request %d, pid = %d\n", r, p->pid);
