@@ -90,6 +90,7 @@ int create( funcptr fp, size_t stackSize ) {
     p->cpuTime = 0;
     p->tickCount = 0;
     p->validProcess = 1010101;
+    memset(p->fdt, 0, sizeof(p->fdt));
     //initialize signal table
     memset(p->signaltable, 0, sizeof(p->signaltable));
 
