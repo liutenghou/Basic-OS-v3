@@ -43,7 +43,7 @@ IOBJ = init.o i386.o evec.o kprintf.o
 UOBJ = mem.o disp.o ctsw.o syscall.o create.o user.o msg.o sleep.o signal.o
 
 #Add your sources here
-MY_OBJ = 
+MY_OBJ = #kbd.o di_calls.o
 
 
 # Don't modiy any of this unless you are really sure

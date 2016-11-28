@@ -155,7 +155,7 @@ extern void tick( void ) {
 //returns the number of ticks a process has consumed so far
 int getticks(int pid){
 	//get the process
-	pcb *p = findPCB(pid);
+	pcb *p = (pcb*)findPCB(pid);
 	pcb *pCurrent = getCurrentProcess();
 
 
@@ -165,7 +165,7 @@ int getticks(int pid){
 	}
 	//if pid == 0, give ticks by idle process
 	if(pid == 0){
-		p = findPCB(getIdlePID());
+		p = (pcb*)findPCB(getIdlePID());
 		return p->tickCount;
 	}
 

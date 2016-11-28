@@ -84,13 +84,13 @@ void dispatch(void) {
 		case (SYS_OPEN):
 			ap = (va_list) p->args;
 			devNo = va_arg(ap, int);
-			di_open(devNo);
+			//p->ret = di_open(devNo);
 			break;
 
 		case (SYS_CLOSE):
 			ap = (va_list) p->args;
 			fd = va_arg(ap, int);
-			di_close(fd);
+			//p->ret = di_close(fd);
 			break;
 
 		case (SYS_WRITE):
@@ -173,7 +173,7 @@ extern pcb *next(void) {
 	return (p);
 }
 
-extern pcb *findPCB(int pid) {
+extern pcb* findPCB(int pid) {
 	/******************************/
 
 	int i;
@@ -343,21 +343,4 @@ int getCPUtimes(pcb *p, processStatuses *ps) {
 	return currentSlot;
 }
 
-//device drivers
-int di_open(int devNo) {
-	kprintf("DI_OPEN ");
-
-	//returns -1 if fail
-
-	//returns filedescriptor 0-3 if success
-	return 0;
-}
-
-int di_close(int fd) {
-
-	//if fd is already closed return failure
-
-	//else return success
-	return 0;
-}
 
