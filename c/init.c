@@ -58,6 +58,8 @@ void initproc( void )				/* The beginning */
   contextinit();
   kprintf("context inited\n");
   
+  //TODO: initialize keyboard
+
 
   // WARNING THE FIRST PROCESS CREATED MUST BE THE IDLE PROCESS.
   // See comments in create.c

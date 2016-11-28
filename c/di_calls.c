@@ -6,6 +6,8 @@
 
 //device drivers
 //argument: devNo: major device number, index into device table
+
+//todo: check what to do if one keyboard already open
 int di_open(int devNo) {
 	kprintf("DI_OPEN ");
 
@@ -19,8 +21,9 @@ int di_open(int devNo) {
 	int i;
 	for(i=0; i<MAX_DEVICES_PER_PROCESS; i++){
 		if(p->fdt[i] == 0){
+			int ret = -1;
 			p->fdt[i] = device_table[i];
-			p->fdt[i].dvopen();
+			ret = p->fdt[i].dvopen();
 			return i; //returns filedescriptor 0-3 if success
 		}
 	}
@@ -39,9 +42,10 @@ int di_close(int fd) {
 	if(p->fdt[fd] == 0){
 		return -2; //alread closed
 	}else{
-		p->fdt[fd].dvclose();
+		int ret = -1;
+		ret = p->fdt[fd].dvclose();
 		p->fdt[fd] = 0;
-		return 0;
+		return ret;
 	}
 
 	//other error
@@ -49,19 +53,43 @@ int di_close(int fd) {
 }
 
 int di_write(int fd, void *buff, int bufflen){
+	//note: for keyboard this will always just return -1
 
-	return 0;
+	if(fd<0 || fd>MAX_DEVICES_PER_PROCESS){
+			return -1;
+		}
+	pcb *p = getCurrentProcess();
+	if(p->fdt[fd] == 0){
+		return -1;
+	}
 
+	return p->fdt[fd].dvwrite(buff, bufflen);
 }
 
 int di_read(int fd, void *buff, int bufflen){
+	if(fd<0 || fd>MAX_DEVICES_PER_PROCESS){
+				return -1;
+			}
+		pcb *p = getCurrentProcess();
+		if(p->fdt[fd] == 0){
+			return -1;
+		}
 
-	return 0;
+		return p->fdt[fd].dvread(buff, bufflen);
+
 }
 
 int di_ioctl(int fd, unsigned long command, ...){
+	if(fd<0 || fd>MAX_DEVICES_PER_PROCESS){
+					return -1;
+				}
+			pcb *p = getCurrentProcess();
+			if(p->fdt[fd] == 0){
+				return -1;
+			}
 
-	return 0;
+			return p->fdt[fd].dviotcl(command);
+
 }
 
 
