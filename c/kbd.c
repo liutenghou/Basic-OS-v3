@@ -1,19 +1,20 @@
+#include <kbd.h>
 #include <xeroskernel.h>
 
 
 //initialize device_table
 int keyboardinit(void){
-	device_table[KEYBOARD0].dvopen = kbd_open;
-	device_table[KEYBOARD0].dvclose = kbd_close;
-	device_table[KEYBOARD0].dvread = kbd0_read;
-	device_table[KEYBOARD0].dvwrite = kbd_write;
-	device_table[KEYBOARD0].dviotcl = kbd_iotcl;
+	device_table[KEYBOARD0].dvopen = &kbd_open;
+	device_table[KEYBOARD0].dvclose = &kbd_close;
+	device_table[KEYBOARD0].dvread = &kbd0_read;
+	device_table[KEYBOARD0].dvwrite = &kbd_write;
+	device_table[KEYBOARD0].dviotcl = &kbd_iotcl;
 
-	device_table[KEYBOARD1].dvopen = kbd_open;
-	device_table[KEYBOARD1].dvclose = kbd_close;
-	device_table[KEYBOARD1].dvread = kbd1_read;
-	device_table[KEYBOARD1].dvwrite = kbd_write;
-	device_table[KEYBOARD1].dviotcl = kbd_iotcl;
+	device_table[KEYBOARD1].dvopen = &kbd_open;
+	device_table[KEYBOARD1].dvclose = &kbd_close;
+	device_table[KEYBOARD1].dvread = &kbd1_read;
+	device_table[KEYBOARD1].dvwrite = &kbd_write;
+	device_table[KEYBOARD1].dviotcl = &kbd_iotcl;
 
 	return 0;
 }

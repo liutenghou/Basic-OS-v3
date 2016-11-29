@@ -22,10 +22,10 @@ int di_open(int devNo) {
 	pcb *p = getCurrentProcess();
 	int i;
 	for (i = 0; i < MAX_DEVICES_PER_PROCESS; i++) {
-		if (p->fdt[i] == 0) {
+		if (p->fdt[i] == NULL_POINTER) {
 			int ret = -1;
-			p->fdt[i] = device_table[i];
-			ret = p->fdt[i].dvopen();
+			p->fdt[i] = &device_table[i];
+			ret = p->fdt[i]->dvopen();
 			return i; //returns filedescriptor 0-3 if success
 		}
 	}
@@ -40,12 +40,12 @@ int di_close(int fd) {
 
 	pcb *p = getCurrentProcess();
 	//if fd is already closed return failure
-	if (p->fdt[fd] == 0) {
+	if (p->fdt[fd] == NULL_POINTER) {
 		return -2; //alread closed
 	} else {
 		int ret = -1;
-		ret = p->fdt[fd].dvclose();
-		p->fdt[fd] = 0;
+		ret = p->fdt[fd]->dvclose();
+		p->fdt[fd] = NULL;
 		return ret;
 	}
 
@@ -60,11 +60,11 @@ int di_write(int fd, void *buff, int bufflen) {
 		return -1;
 	}
 	pcb *p = getCurrentProcess();
-	if (p->fdt[fd] == 0) {
+	if (p->fdt[fd] == NULL_POINTER) {
 		return -1;
 	}
 
-	return p->fdt[fd].dvwrite(buff, bufflen);
+	return p->fdt[fd]->dvwrite(buff, bufflen);
 }
 
 int di_read(int fd, void *buff, int bufflen) {
@@ -72,11 +72,11 @@ int di_read(int fd, void *buff, int bufflen) {
 		return -1;
 	}
 	pcb *p = getCurrentProcess();
-	if (p->fdt[fd] == 0) {
+	if (p->fdt[fd] == NULL_POINTER) {
 		return -1;
 	}
 
-	return p->fdt[fd].dvread(buff, bufflen);
+	return p->fdt[fd]->dvread(buff, bufflen);
 
 }
 
@@ -85,11 +85,11 @@ int di_ioctl(int fd, unsigned long command, ...) {
 		return -1;
 	}
 	pcb *p = getCurrentProcess();
-	if (p->fdt[fd] == 0) {
+	if (p->fdt[fd] == NULL_POINTER) {
 		return -1;
 	}
 
-	return p->fdt[fd].dviotcl(command);
+	return p->fdt[fd]->dviotcl(command);
 
 }
 
