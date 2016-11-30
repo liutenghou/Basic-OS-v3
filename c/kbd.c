@@ -22,6 +22,23 @@ int keyboardinit(void){
 
 int kbd_open(){
 	kprintf("IN KBD OPEN ");
+
+	//read from port 0x60
+
+	//control information read/written to port 0x64
+	//check low order bit is 1, if it is, then there is data to be read from 0x60
+
+
+
+
+	//irq for keyboard controller is 1
+	//enables interrupts form keyboard
+	enable_irq(1,0);
+
+	//todo: install ISR
+
+	//todo: convert scan codes to ASCII, two: one down, one up
+
 	return 0;
 }
 

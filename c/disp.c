@@ -117,6 +117,9 @@ void dispatch(void) {
 			p->ret = sighandler(signal, newhandler, oldhandler);
 
 			break;
+		case(SYS_KEYBOARD):
+			kprintf("kb");
+			break;
 		default:
 			kprintf("Bad Sys request %d, pid = %d\n", r, p->pid);
 		}
