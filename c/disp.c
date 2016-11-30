@@ -118,7 +118,12 @@ void dispatch(void) {
 
 			break;
 		case(SYS_KEYBOARD):
-			kprintf("kb");
+			//read inb(ADDR) & outb(ADDR, val)
+			if(inb(0x64)){
+				kprintf("KB");
+			}
+
+			end_of_intr();
 			break;
 		default:
 			kprintf("Bad Sys request %d, pid = %d\n", r, p->pid);
