@@ -120,7 +120,7 @@ void dispatch(void) {
 		case(SYS_KEYBOARD):
 			//read inb(ADDR) & outb(ADDR, val)
 			if(inb(0x64)){
-				kprintf("KB");
+				kprintf("KB:%d ", inb(0x60));
 			}
 
 			end_of_intr();
