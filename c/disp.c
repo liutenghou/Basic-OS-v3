@@ -84,7 +84,7 @@ void dispatch(void) {
 		case (SYS_OPEN):
 			ap = (va_list) p->args;
 			devNo = va_arg(ap, int);
-			//p->ret = di_open(devNo);
+			p->ret = di_open(devNo);
 			break;
 
 		case (SYS_CLOSE):

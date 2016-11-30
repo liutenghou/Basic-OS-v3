@@ -146,8 +146,8 @@ struct struct_ps {
 device device_table[MAX_DEVICES];
 
 //only one keyboard allowed to be open at once
-#define KEYBOARD0    0 //no echo, process will have to display characters
-#define KEYBOARD1    1 //echos before process accesses char
+#define KEYBOARD_NOECHO    0 //no echo, process will have to display characters
+#define KEYBOARD_ECHO    1 //echos before process accesses char
 #define KBMON      	 2 //krab monster
 #define TTY0         3 //talk to you never
 

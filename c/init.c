@@ -59,8 +59,8 @@ void initproc( void )				/* The beginning */
   kprintf("context inited\n");
   
   //initialize keyboard
-  //int keyret = keyboardinit();
-  //kprintf("keyboard inited:%d\n", keyret);
+  int keyret = keyboardinit();
+  kprintf("keyboard inited:%d\n", keyret);
 
 
   // WARNING THE FIRST PROCESS CREATED MUST BE THE IDLE PROCESS.

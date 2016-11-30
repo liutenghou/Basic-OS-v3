@@ -2,7 +2,7 @@
 #include <xeroslib.h>
 
 //for device calls
-//TODO: for all below, must call corresponding dv functions
+//for all below, must call corresponding dv functions
 
 //device drivers
 
@@ -11,7 +11,7 @@
 
 //todo: check what to do if one keyboard already open
 int di_open(int devNo) {
-	kprintf("DI_OPEN ");
+	kprintf("DI_OPEN:%d ", devNo);
 
 	//check that devNo is in range
 	//returns -1 if open fail

@@ -82,7 +82,6 @@ int sysgetcputimes(processStatuses *ps) {
 
 //where device_no is Major device number
 int sysopen(int device_no){
-
 	return syscall(SYS_OPEN, device_no);
 }
 
