@@ -236,6 +236,7 @@ extern int syswrite(int fd, void *buff, int bufflen);
 extern int sysread(int fd, void *buff, int bufflen);
 extern int sysioctl(int fd, unsigned long command, ...);
 int keyboard(void);
+unsigned int kbtoa( unsigned char code );
 
 //signals
 int syssighandler(int signal, void (*newhandler)(void *),

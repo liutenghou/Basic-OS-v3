@@ -120,7 +120,11 @@ void dispatch(void) {
 		case(SYS_KEYBOARD):
 			//read inb(ADDR) & outb(ADDR, val)
 			if(inb(0x64)){
-				kprintf("KB:%d ", inb(0x60));
+				//note that two of these interrupts come with a keypress
+				//the down and release
+				unsigned char c = inb(0x60);
+				kprintf("%c", kbtoa(c));
+
 			}
 
 			end_of_intr();
