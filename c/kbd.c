@@ -21,6 +21,7 @@ int keyboardinit(void){
 
 
 int kbd_open(){
+	kprintf("IN KBD OPEN ");
 	return 0;
 }
 

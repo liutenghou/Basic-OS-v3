@@ -14,7 +14,7 @@ void busy( void ) {
   myPid = sysgetpid();
   
   for (i = 0; i < 10; i++) {
-    sprintf(buff, "My pid is %d\n", myPid);
+    sprintf(buff, "busy pid is %d\n", myPid);
     sysputs(buff);
     if (myPid == 2 && count == 1) syskill(3);
     count++;
@@ -145,6 +145,8 @@ void     root( void ) {
     int fd_keyboardecho = sysopen(KEYBOARD_ECHO);
 
     kprintf("filedescriptor:%d ", fd_keyboardecho);
+
+
     /*
     syssighandler(12, &producer, 0);
     sysyield();
