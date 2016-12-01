@@ -1,3 +1,6 @@
+$Revision: 12579 $ $Date: 2014-12-26 11:31:39 +0100 (Fr, 26. Dez 2014) $
+Options: apmbios pcibios pnpbios eltorito rombios32
+
 
 Press F12 for boot menu.
 
@@ -8,18 +11,15 @@ Loading........
 
 CPSC 415, 2016W1
 32 Bit Xeros 0.01
-Located at: 0 to 8748
+Located at: 0 to a5cc
 Max addr is 4194303 3fffff
 memory inited
 dispatcher inited
 Context init called
 context inited
+keyboard inited:101
 Creating Idle Process
 create inited
-Root has been called
-*SIGHANDLER*12*7716*VALID:1170735103 My pid is 2
-My pid is 3
-Current pid 1 Killing 2
-My pid is 3
-Current pid 1 Killing 3
-ß
+Welcome to Xeros - an experimental OS
+DI_OPEN:0 filesdescriptor:0
+Username:kb: 1d kb: 20 kb: a0 kb: 9d kb: 1d kb: 9d kb: 20 dkb: a0 ß

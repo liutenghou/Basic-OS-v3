@@ -110,6 +110,9 @@ void dispatch(void) {
 			buff = va_arg(ap, void*);
 			bufflen = va_arg(ap, int);
 			p->ret = di_read(fd, buff, bufflen);
+
+			//must block process until: 1) bufflen reached, 2) enter pressed
+
 			break;
 		case (SYS_IOCTL):
 			ap = (va_list) p->args;
@@ -128,15 +131,7 @@ void dispatch(void) {
 
 			break;
 		case(SYS_KEYBOARD):
-			//read inb(ADDR) & outb(ADDR, val)
-			//control information read/written to port 0x64
-			//check low order bit is 1, if it is, then there is data to be read from 0x60
-			if(inb(0x64) && keyboardEchoOn){ //checks 0x64 and if echo is on/off
-				//note that two of these interrupts come with a keypress
-				//the down and release
-				unsigned char c = inb(0x60);
-				kprintf("%c", kbtoa(c));
-			}
+			keyboard_print();
 			end_of_intr();
 			break;
 		default:

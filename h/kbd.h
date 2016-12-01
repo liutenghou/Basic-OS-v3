@@ -8,6 +8,8 @@
 
 #define LCTL    0x1d
 #define CAPSL   0x3a
+#define CONTROL_D	0x4
+#define ENTER		0xa
 
 
 /* scan state flags */
@@ -54,10 +56,7 @@ unsigned char   kbctl[] = { 0,
 int kbd_open_noecho(void);
 int kbd_open_echo(void);
 int kbd_close(void);
-
-//no echo
-int kbd0_read(void *buff, int bufflen);
-//echos
-int kbd1_read(void *buff, int bufflen);
+void resetKeyboard(void);
+int kbd_read(void *buff, int bufflen);
 int kbd_write(void *buff, int bufflen);
 int kbd_iotcl(unsigned long command, int EOFChar);

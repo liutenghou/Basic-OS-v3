@@ -238,6 +238,7 @@ extern int sysioctl(int fd, unsigned long command, ...);
 int keyboard(void);
 unsigned int kbtoa( unsigned char code );
 int keyboardEchoOn;
+void keyboard_print(void);
 //keyboard ioctl stuff
 #define CHANGE_EOF 	53
 #define ECHOOFF		55

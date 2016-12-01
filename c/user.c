@@ -140,10 +140,12 @@ void     root( void ) {
     int fd_keyboardNOecho = sysopen(KEYBOARD_NOECHO);
     kprintf("filesdescriptor:%d \n", fd_keyboardNOecho);
     sysioctl(fd_keyboardNOecho, ECHOON);
+    sysread(fd_keyboardNOecho, buff, 4);
 
     //close no echo keyboard
     //turn echo on in no echo keyboard
     sysputs("Username:");
+
 
 
     //TODO: open echo keyboard

@@ -94,6 +94,7 @@ extern int syswrite(int fd, void *buff, int bufflen){
 	return syscall(SYS_WRITE, fd, buff, bufflen);
 }
 extern int sysread(int fd, void *buff, int bufflen){
+	kprintf("SYSREAD ");
 	return syscall(SYS_READ, fd, buff, bufflen);
 }
 extern int sysioctl(int fd, unsigned long command, ...){
