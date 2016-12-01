@@ -80,7 +80,7 @@ int di_read(int fd, void *buff, int bufflen) {
 
 }
 
-int di_ioctl(int fd, unsigned long command, ...) {
+int di_ioctl(int fd, unsigned long command, int EOFChar) {
 	if (fd < 0 || fd > MAX_DEVICES_PER_PROCESS) {
 		return -1;
 	}
@@ -89,7 +89,7 @@ int di_ioctl(int fd, unsigned long command, ...) {
 		return -1;
 	}
 
-	return p->fdt[fd]->dviotcl(command);
+	return p->fdt[fd]->dviotcl(command, EOFChar);
 
 }
 

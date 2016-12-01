@@ -97,5 +97,8 @@ extern int sysread(int fd, void *buff, int bufflen){
 	return syscall(SYS_READ, fd, buff, bufflen);
 }
 extern int sysioctl(int fd, unsigned long command, ...){
-	return syscall(SYS_IOCTL, fd, command);
+	va_list args;
+	va_start(args, command);
+	int EOFChar = va_arg(args, unsigned long);
+	return syscall(SYS_IOCTL, fd, command, EOFChar);
 }

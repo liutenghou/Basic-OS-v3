@@ -2,47 +2,52 @@
 #include <xeroskernel.h>
 
 
+
 //initialize device_table
 int keyboardinit(void){
-	device_table[KEYBOARD_NOECHO].dvopen = &kbd_open;
+	device_table[KEYBOARD_NOECHO].dvopen = &kbd_open_noecho;
 	device_table[KEYBOARD_NOECHO].dvclose = &kbd_close;
 	device_table[KEYBOARD_NOECHO].dvread = &kbd0_read;
 	device_table[KEYBOARD_NOECHO].dvwrite = &kbd_write;
 	device_table[KEYBOARD_NOECHO].dviotcl = &kbd_iotcl;
 
-	device_table[KEYBOARD_ECHO].dvopen = &kbd_open;
+	device_table[KEYBOARD_ECHO].dvopen = &kbd_open_echo;
 	device_table[KEYBOARD_ECHO].dvclose = &kbd_close;
 	device_table[KEYBOARD_ECHO].dvread = &kbd1_read;
 	device_table[KEYBOARD_ECHO].dvwrite = &kbd_write;
 	device_table[KEYBOARD_ECHO].dviotcl = &kbd_iotcl;
 
+	keyboardEchoOn = 0;
 	return 101;
 }
 
 
-int kbd_open(){
-	kprintf("IN KBD OPEN ");
-
-	//read from port 0x60
-
-	//control information read/written to port 0x64
-	//check low order bit is 1, if it is, then there is data to be read from 0x60
-
-
-
+int kbd_open_echo(){
+//	kprintf("IN KBD OPEN ");
+	keyboardEchoOn = 1;
 
 	//irq for keyboard controller is 1
 	//enables interrupts form keyboard
+	//args(irq, diable)
 	enable_irq(1,0);
 
-	//todo: install ISR
+	return 0;
+}
 
-	//todo: convert scan codes to ASCII, two: one down, one up
+int kbd_open_noecho(){
+//	kprintf("IN KBD OPEN ");
+	keyboardEchoOn = 0;
+
+	//irq for keyboard controller is 1
+	//enables interrupts form keyboard
+	//args(irq, diable)
+	enable_irq(1,0);
 
 	return 0;
 }
 
 int kbd_close(){
+	enable_irq(1,1);
 	return 0;
 
 }
@@ -57,32 +62,49 @@ int kbd1_read(void *buff, int bufflen){
 	return 0;
 }
 
+//cannot write to keyboard, always return -1
 int kbd_write(void *buff, int bufflen){
-	kprintf(" DVWRITE ");
+	//kprintf(" DVWRITE ");
 	return -1;
 }
 
-int kbd_iotcl(unsigned long command){
 
+int kbd_iotcl(unsigned long command, int EOFChar){
+	switch(command) {
+
+	   case (CHANGE_EOF): //change character for EOF
+		   //with int value of command to become new EOF
+		  kprintf("EOFChar:%d ", EOFChar);
+	      break;
+	   case (ECHOOFF): //turn echoing off
+		   keyboardEchoOn = 0;
+	      break;
+
+	   case (ECHOON): //turn echoing on
+		   keyboardEchoOn = 1;
+		   break;
+	   default :
+		   ;
+	}
 	return 0;
 }
 
-//given code
+//given code from scancodesToAscii.txt
 
-//the heck does this do?
-//unsigned char   code;
-//static int extchar(unsigned char   code)
-//{
-//        return state &= ~EXTENDED;
-//}
+//changed extchar to ANSI compliant syntax, more readable
+static int extchar(unsigned char code)
+{
+	state = state & ~EXTENDED;
+	return state;
+}
 
 //HOW DOES THIS EVEN COMPILE???
-static int
-extchar(code)
-unsigned char   code;
-{
-        state &= ~EXTENDED;
-}
+//static int
+//extchar(code)
+//unsigned char   code;
+//{
+//        state &= ~EXTENDED;
+//}
 
 //converts keyboard interrupt code to ASCII
 unsigned int kbtoa( unsigned char code )

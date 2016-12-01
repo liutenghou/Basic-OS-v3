@@ -134,17 +134,33 @@ void     root( void ) {
     int proc_pid, con_pid;
     int i;
 
-    sysputs("Root has been called\n");
+    sysputs("Welcome to Xeros - an experimental OS\n");
+
+    //TODO: open no echo keyboard
+    int fd_keyboardNOecho = sysopen(KEYBOARD_NOECHO);
+    kprintf("filesdescriptor:%d \n", fd_keyboardNOecho);
+    sysioctl(fd_keyboardNOecho, ECHOON);
+
+    //close no echo keyboard
+    //turn echo on in no echo keyboard
+    sysputs("Username:");
+
+
+    //TODO: open echo keyboard
+//    int fd_keyboardecho = sysopen(KEYBOARD_ECHO);
+//	kprintf("filedescriptor:%d \n", fd_keyboardecho);
+	//sysclose(KEYBOARD_ECHO);
+	//syssleep(5000);
+
 
 
     // Test for ready queue removal. 
    
-    proc_pid = syscreate(&busy, 1024);
-    con_pid = syscreate(&busy, 1024);
+//    proc_pid = syscreate(&busy, 1024);
+//    con_pid = syscreate(&busy, 1024);
 
-    int fd_keyboardecho = sysopen(KEYBOARD_ECHO);
 
-    kprintf("filedescriptor:%d ", fd_keyboardecho);
+
 
 
     /*

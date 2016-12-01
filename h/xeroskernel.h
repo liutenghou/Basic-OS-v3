@@ -105,7 +105,7 @@ typedef struct devsw {
 	int (*dvoint)(void);
 	void *dvioblk;
 	int dvminor;
-	int (*dviotcl)(unsigned long msg);
+	int (*dviotcl)(unsigned long command, int ChangeEOF);
 } device;
 
 /* Structure to track the information associated with a single process */
@@ -210,7 +210,7 @@ int di_open(int devNo);
 int di_close(int fd);
 int di_write(int fd, void *buff, int bufflen);
 int di_read(int fd, void *buff, int bufflen);
-int di_ioctl(int fd, unsigned long command, ...);
+int di_ioctl(int fd, unsigned long command, int EOFChar);
 
 
 //signals kernel side
@@ -237,7 +237,11 @@ extern int sysread(int fd, void *buff, int bufflen);
 extern int sysioctl(int fd, unsigned long command, ...);
 int keyboard(void);
 unsigned int kbtoa( unsigned char code );
-
+int keyboardEchoOn;
+//keyboard ioctl stuff
+#define CHANGE_EOF 	53
+#define ECHOOFF		55
+#define ECHOON		56
 //signals
 int syssighandler(int signal, void (*newhandler)(void *),
 		void (**oldHandler)(void *));

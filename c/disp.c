@@ -106,7 +106,9 @@ void dispatch(void) {
 		case (SYS_IOCTL):
 			ap = (va_list) p->args;
 			fd = va_arg(ap, int);
-
+			int command = va_arg(ap, unsigned long);
+			int EOFChar = va_arg(ap, int);
+			di_ioctl(fd, command, EOFChar);
 			break;
 		case(SYS_SIGHANDLER):
 			ap = (va_list) p->args;
@@ -119,14 +121,14 @@ void dispatch(void) {
 			break;
 		case(SYS_KEYBOARD):
 			//read inb(ADDR) & outb(ADDR, val)
-			if(inb(0x64)){
+			//control information read/written to port 0x64
+			//check low order bit is 1, if it is, then there is data to be read from 0x60
+			if(inb(0x64) && keyboardEchoOn){ //checks 0x64 and if echo is on/off
 				//note that two of these interrupts come with a keypress
 				//the down and release
 				unsigned char c = inb(0x60);
 				kprintf("%c", kbtoa(c));
-
 			}
-
 			end_of_intr();
 			break;
 		default:
