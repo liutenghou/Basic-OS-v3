@@ -30,6 +30,9 @@ void dispatch(void) {
 	void* newhandler;
 	void* oldhandler;
 
+	void *buff;
+	int bufflen;
+
 	for (p = next(); p;) {
 		//      kprintf("Process %x selected stck %x\n", p, p->esp);
 
@@ -90,25 +93,30 @@ void dispatch(void) {
 		case (SYS_CLOSE):
 			ap = (va_list) p->args;
 			fd = va_arg(ap, int);
-			//p->ret = di_close(fd);
+			p->ret = di_close(fd);
 			break;
 
 		case (SYS_WRITE):
 			ap = (va_list) p->args;
 			fd = va_arg(ap, int);
+			buff = va_arg(ap, void*);
+			bufflen = va_arg(ap, int);
+			p->ret = di_write(fd, buff, bufflen);
 			break;
 
 		case (SYS_READ):
 			ap = (va_list) p->args;
 			fd = va_arg(ap, int);
-
+			buff = va_arg(ap, void*);
+			bufflen = va_arg(ap, int);
+			p->ret = di_read(fd, buff, bufflen);
 			break;
 		case (SYS_IOCTL):
 			ap = (va_list) p->args;
 			fd = va_arg(ap, int);
 			int command = va_arg(ap, unsigned long);
 			int EOFChar = va_arg(ap, int);
-			di_ioctl(fd, command, EOFChar);
+			p->ret = di_ioctl(fd, command, EOFChar);
 			break;
 		case(SYS_SIGHANDLER):
 			ap = (va_list) p->args;
