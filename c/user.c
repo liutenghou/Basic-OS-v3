@@ -146,8 +146,13 @@ void     root( void ) {
     //turn echo on in no echo keyboard
     sysputs("Username:");
     sysread(fd_keyboardNOecho, buff, sizeof(buff));
-    sysputs("buff: ");
-    sysputs(buff);
+    if(strcmp(buff,"cs415")==0){
+    	sysputs("username match\n");
+    }
+
+
+//    sysputs("buff: ");
+//    sysputs(buff);
 
 
 

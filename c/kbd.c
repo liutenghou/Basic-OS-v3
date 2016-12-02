@@ -11,7 +11,6 @@ int appBufferLength;
 char EOF_char_internal = (char)CONTROL_D;
 
 char internalBuffer[INTERNAL_BUFFER_LENGTH];
-unsigned int lengthCount;
 
 //initialize device_table
 int keyboardinit(void) {
@@ -32,18 +31,14 @@ int keyboardinit(void) {
 	isReading = 0;
 	isOpen = 0;
 	internalBuffer[0] = 0;
-	lengthCount = 0;
 
 
 	return 101;
 }
 
 void resetKeyboard(void){
-	//memset(buff, 0, sizeof(buff));
 	isReading = 0;
 	internalBuffer[0] = 0;
-	lengthCount = 0;
-	isOpen = 0;
 }
 
 //copies data from one buffer to the other
@@ -126,57 +121,52 @@ void keyboard_print(void) {
 		if(isOpen && (isReading==0)){
 			//if enter or control-d pressed, done
 			if((int)c_actual == ENTER){
-				//kprintf("ENTER ");
+				kprintf("OP ");
 
 				//copyBuffer(internalBuffer, appBuffer);
-				//todo:if enter is pressed, also add \n to output
+				//if enter is pressed, also add \n to output
 				addCharToAppBuffer("\\n"); //not sure about this
+				resetKeyboard();
 				ready(getReadingProcess());
 
-				resetKeyboard();
-				kbd_close();
+
+				//kbd_close();
 			}else if((int)c_actual == EOF_char_internal){
 				//close the keyboard
 				//kprintf("CONTROL_D ");
 
 				//copyBuffer(internalBuffer, appBuffer);
-				ready(getReadingProcess());
-
 				resetKeyboard();
 				kbd_close();
+				ready(getReadingProcess());
+
+
 			}else{
 				//save keystrokes to app buffer
 				if((int)c_actual != 4){ //no control-d printing
-
-
 					addCharToInternalBuffer(c_actual);
 				}
 			}
-		}
-
-		//-----------------------
-		//save chars to app buffer, do this when we do read
-		if(isReading){
+		}else if(isReading){//save chars to app buffer, do this when we do read
 			//if enter or control-d pressed, done
 			if((int)c_actual == ENTER){
-				//kprintf("ENTER ");
+				kprintf("RD ");
 
 				//copyBuffer(internalBuffer, appBuffer);
-				//todo:if enter is pressed, also add \n to output
-				//addCharToAppBuffer("\n"); //not sure about this
+				//if enter is pressed, also add \n to output
+				//addCharToAppBuffer("\\n"); //not sure about this
+				resetKeyboard();
 				ready(getReadingProcess());
 
-				resetKeyboard();
-				kbd_close();
+
 			}else if((int)c_actual == EOF_char_internal){
 				//close the keyboard
 				//kprintf("CONTROL_D ");
 
 				//copyBuffer(internalBuffer, appBuffer);
-				ready(getReadingProcess());
-
 				resetKeyboard();
 				kbd_close();
+				ready(getReadingProcess());
 			}else{
 				//save keystrokes to app buffer
 				if((int)c_actual != 4){ //no control-d printing
@@ -184,7 +174,7 @@ void keyboard_print(void) {
 				}
 			}
 		}
-		//-----------------------
+		//kprintf("isOpen:%d, isReading%d \n", isOpen, isReading);
 
 	}
 
@@ -208,6 +198,8 @@ int kbd_open_noecho() {
 //	kprintf("IN KBD OPEN ");
 	keyboardEchoOn = 0;
 	isReading = 1;
+	isOpen = 1;
+
 
 	//irq for keyboard controller is 1
 	//enables interrupts form keyboard
@@ -218,8 +210,11 @@ int kbd_open_noecho() {
 }
 
 int kbd_close() {
-	keyboardEchoOn = 0;
+
 	resetKeyboard();
+
+	isOpen = 0;
+	keyboardEchoOn = 0;
 	enable_irq(1, 1);
 	return 0;
 
