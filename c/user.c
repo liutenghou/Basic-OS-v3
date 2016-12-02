@@ -4,6 +4,7 @@
 #include <xeroskernel.h>
 #include <xeroslib.h>
 
+/*
 int proc_pid, con_pid;
 void busy( void ) {
   int myPid;
@@ -70,7 +71,7 @@ void sleep3( void ) {
 
 
 void producer( void ) {
-/****************************/
+
 
     int         i;
     char        buff[100];
@@ -100,7 +101,6 @@ void producer( void ) {
 }
 
 void consumer( void ) {
-/****************************/
 
     int         i;
     char        buff[100];
@@ -125,18 +125,30 @@ void consumer( void ) {
     sysputs( buff );
     sysstop();
 }
+*/
+
 
 void shell(void){
 	char cmdBuffer[100];
 	cmdBuffer[0]=0;
 	char currentCommand[100];
 	currentCommand[0]=0;
+	char cmd[3];
+	char option[3];
+	processStatuses pstat;
 
-
+/* note:
+	#define STATE_READY     1
+	#define STATE_SLEEP     22
+	#define STATE_RUNNING   23
+*/
+	char *stateString;
 
 	int fd_keyboard_Echo = sysopen(KEYBOARD_ECHO);
 	kprintf("fd_keybaordEcho:%d\n", fd_keyboard_Echo);
 	while(strcmp(currentCommand, "ex")!=0){
+		memset(cmd, '\0', sizeof(cmd));
+		memset(option, '\0', sizeof(option));
 
 		sysputs(">");
 		sysread(fd_keyboard_Echo, cmdBuffer, sizeof(cmdBuffer));
@@ -144,9 +156,33 @@ void shell(void){
 		strcpy(currentCommand, cmdBuffer);
 		memset(cmdBuffer, '\0', sizeof(cmdBuffer));
 		//kprintf("cmdBuffer:%s, currentCommand:%s \n", cmdBuffer, currentCommand);
-		//todo: parse
+		//todo: parse first word for command
+		//actually will hardcode this
 
+		//convert state to something human readable
+		if(strcmp(currentCommand, "ps") == 0){
+			sysputs("PID	STATE	TIME_ALIVE\n");
+			sysgetcputimes(&pstat);
+			int i;
+			for(i=0; i<sizeof(pstat.pid);i++){
+				if(pstat.cpuTime[i] != 0){
+					switch(pstat.status[i]){
 
+						case(1):
+								stateString = "STATE_READY";
+						break;
+						case(22):
+								stateString = "STATE_SLEEP";
+						break;
+						case(23):
+								stateString = "STATE_RUNNING";
+						break;
+					}
+
+					kprintf("%d	   %s	 %d\n",pstat.pid[i], stateString, pstat.cpuTime[i]);
+				}
+			}
+		}
 	}
 	sysclose(fd_keyboard_Echo);
 	sysstop();

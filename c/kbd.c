@@ -44,10 +44,10 @@ void resetKeyboard(void){
 //copies data from one buffer to the other
 void copyBuffer(char* sourceBuffer, char* destinationBuffer){
 	int shorterLength;
-	if(sizeof(sourceBuffer)<sizeof(destinationBuffer)){
-		shorterLength = sizeof(sourceBuffer);
+	if(strlen(sourceBuffer)<strlen(destinationBuffer)){
+		shorterLength = strlen(sourceBuffer);
 	}else{
-		shorterLength = sizeof(destinationBuffer);
+		shorterLength = strlen(destinationBuffer);
 	}
 	int i;
 	for(i=0; i<shorterLength; i++){
