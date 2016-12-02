@@ -151,7 +151,7 @@ void dispatch(void) {
 		;
 }
 
-pcb* getReadingProcess(){
+pcb* getReadingProcess(void){
 	return readingProcess;
 }
 

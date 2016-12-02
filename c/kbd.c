@@ -2,12 +2,15 @@
 #include <xeroskernel.h>
 
 #define INTERNAL_BUFFER_LENGTH 4
+#define MAX_APP_BUFFER_LENGTH 1000 //need to find out what this number should be
 //char buff[4]; //I don't know why this is necessary
 int isReading;
 char *appBuffer;
+int appBufferLength;
 char EOF_char_internal = (char)CONTROL_D;
 
 char internalBuffer[INTERNAL_BUFFER_LENGTH];
+unsigned int lengthCount;
 
 //initialize device_table
 int keyboardinit(void) {
@@ -27,6 +30,7 @@ int keyboardinit(void) {
 	//memset(buff, 0, sizeof(buff));
 	isReading = 0;
 	internalBuffer[0] = 0;
+	lengthCount = 0;
 
 	return 101;
 }
@@ -35,6 +39,7 @@ void resetKeyboard(void){
 	//memset(buff, 0, sizeof(buff));
 	isReading = 0;
 	internalBuffer[0] = 0;
+	lengthCount = 0;
 }
 
 //copies data from one buffer to the other
@@ -51,9 +56,25 @@ void copyBuffer(char* sourceBuffer, char* destinationBuffer){
 	}
 }
 
-//concatenates data from internal buffer to application buffer
-void concatInternalToAppBuffer(void){
-//TODO: continue here
+//concatenates char from keyboard to application buffer
+int addCharToAppBuffer(char c){
+	//find where there is empty space in appBuffer
+	int startIndex = 0;
+	int i;
+	for(i=0; i<appBufferLength; i++){
+		if(appBuffer[i] == 0){
+			startIndex = i;
+
+			appBuffer[i] = c;
+
+			return startIndex;
+		}
+	}
+
+
+
+	kprintf("ERROR: app buffer full ");
+	return -1; //is full
 
 }
 
@@ -77,20 +98,15 @@ void keyboard_print(void) {
 
 		}
 
-		//todo: save chars to buffer, seems like we need to immediately copy internal buffer to
-
-
-
-
-		//application buffer when internal is full
+		//tsave chars to app buffer, do this when we do read
 		if(isReading){
-
 			//if enter or control-d pressed, done
 			if((int)c_actual == ENTER){
 				//kprintf("ENTER ");
 
-				copyBuffer(internalBuffer, appBuffer);
+				//copyBuffer(internalBuffer, appBuffer);
 				//todo:if enter is pressed, also add \n to output
+				//addCharToAppBuffer("\n"); //not sure about this
 				ready(getReadingProcess());
 
 				resetKeyboard();
@@ -99,19 +115,14 @@ void keyboard_print(void) {
 				//close the keyboard
 				//kprintf("CONTROL_D ");
 
-				copyBuffer(internalBuffer, appBuffer);
+				//copyBuffer(internalBuffer, appBuffer);
 				ready(getReadingProcess());
 				kbd_close();
 				resetKeyboard();
 			}else{
-				//save keystrokes to buffer
-				int i;
-				for(i=0; i<INTERNAL_BUFFER_LENGTH;i++){
-					if(internalBuffer[i] == 0){
-						//kprintf("r:%c ", c_actual);
-						internalBuffer[i] = c_actual;
-						break;
-					}
+				//save keystrokes to app buffer
+				if((int)c_actual != 4){ //no control-d printing
+					addCharToAppBuffer(c_actual);
 				}
 			}
 		}
@@ -123,6 +134,7 @@ void keyboard_print(void) {
 int kbd_open_echo() {
 //	kprintf("IN KBD OPEN ");
 	keyboardEchoOn = 1;
+	isReading = 1;
 
 	//irq for keyboard controller is 1
 	//enables interrupts form keyboard
@@ -135,6 +147,7 @@ int kbd_open_echo() {
 int kbd_open_noecho() {
 //	kprintf("IN KBD OPEN ");
 	keyboardEchoOn = 0;
+	isReading = 1;
 
 	//irq for keyboard controller is 1
 	//enables interrupts form keyboard
@@ -153,12 +166,20 @@ int kbd_close() {
 }
 
 int kbd_read(void *buff, int bufflen) {
-	kprintf("kbd_read ");
+	//kprintf("kbd_read ");
 	appBuffer = (char*)buff;
-	int i;
-	for(i=0; i<INTERNAL_BUFFER_LENGTH;i++){
-		appBuffer[i]=internalBuffer[i];
+	appBufferLength = bufflen;
+
+	if(appBuffer <0){
+		return -1;
 	}
+	//TODO: allow less than 4 chars later
+	if(bufflen < 4){
+		return -2;
+	}
+
+	//copy data from internalBuffer (started reading when open) to appBuffer
+	copyBuffer(internalBuffer, appBuffer);
 
 	isReading = 1;
 
