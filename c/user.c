@@ -135,7 +135,7 @@ void shell(void){
 
 
 	int fd_keyboard_Echo = sysopen(KEYBOARD_ECHO);
-
+	kprintf("fd_keybaordEcho:%d\n", fd_keyboard_Echo);
 	while(strcmp(currentCommand, "ex")!=0){
 
 		sysputs(">");
@@ -144,6 +144,9 @@ void shell(void){
 		strcpy(currentCommand, cmdBuffer);
 		memset(cmdBuffer, '\0', sizeof(cmdBuffer));
 		sysputs(currentCommand);
+
+		//todo: shell should print
+
 
 	}
 	sysstop();

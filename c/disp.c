@@ -89,6 +89,7 @@ void dispatch(void) {
 		case (SYS_OPEN):
 			ap = (va_list) p->args;
 			devNo = va_arg(ap, int);
+			kprintf("dispatcher devNo:%d\n", devNo);
 			p->ret = di_open(devNo);
 			break;
 

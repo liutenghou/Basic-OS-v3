@@ -11,7 +11,7 @@
 
 //todo: check what to do if one keyboard already open
 int di_open(int devNo) {
-	//kprintf("DI_OPEN:%d ", devNo);
+	kprintf("DI_OPEN:%d ", devNo);
 
 	//check that devNo is in range
 	//returns -1 if open fail
@@ -23,10 +23,9 @@ int di_open(int devNo) {
 	int i;
 	for (i = 0; i < MAX_DEVICES_PER_PROCESS; i++) {
 		if (p->fdt[i] == NULL_POINTER) {
-			int ret = -1;
-			p->fdt[i] = &device_table[i];
-			ret = p->fdt[i]->dvopen();
-			return i; //returns filedescriptor 0-3 if success
+			p->fdt[i] = &device_table[devNo];
+			p->fdt[i]->dvopen();
+			return devNo; //returns filedescriptor 0-3 if success
 		}
 	}
 	return -1;
@@ -45,7 +44,7 @@ int di_close(int fd) {
 	} else {
 		int ret = -1;
 		ret = p->fdt[fd]->dvclose();
-		p->fdt[fd] = NULL;
+		p->fdt[fd] = NULL_POINTER;
 		return ret;
 	}
 

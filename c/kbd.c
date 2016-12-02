@@ -181,7 +181,7 @@ void keyboard_print(void) {
 }
 
 int kbd_open_echo() {
-//	kprintf("IN KBD OPEN ");
+	kprintf("IN KBD_ECHO OPEN ");
 	keyboardEchoOn = 1;
 	isOpen = 1;
 
