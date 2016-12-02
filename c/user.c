@@ -143,12 +143,12 @@ void shell(void){
 		//note strcpy(dest, source)
 		strcpy(currentCommand, cmdBuffer);
 		memset(cmdBuffer, '\0', sizeof(cmdBuffer));
-		sysputs(currentCommand);
-
-		//todo: shell should print
+		//kprintf("cmdBuffer:%s, currentCommand:%s \n", cmdBuffer, currentCommand);
+		//todo: parse
 
 
 	}
+	sysclose(fd_keyboard_Echo);
 	sysstop();
 
 

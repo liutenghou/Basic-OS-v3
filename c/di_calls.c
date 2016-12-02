@@ -25,7 +25,7 @@ int di_open(int devNo) {
 		if (p->fdt[i] == NULL_POINTER) {
 			p->fdt[i] = &device_table[devNo];
 			p->fdt[i]->dvopen();
-			return devNo; //returns filedescriptor 0-3 if success
+			return i; //returns filedescriptor 0-3 if success
 		}
 	}
 	return -1;
