@@ -63,3 +63,4 @@ int kbd_write(void *buff, int bufflen);
 int kbd_iotcl(unsigned long command, int EOFChar);
 void copyBuffer(char* sourceBuffer, char* destinationBuffer);
 int addCharToAppBuffer(char c);
+int addCharToInternalBuffer(char c);
