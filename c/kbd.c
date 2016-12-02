@@ -30,7 +30,7 @@ int keyboardinit(void) {
 	//memset(buff, 0, sizeof(buff));
 	isReading = 0;
 	isOpen = 0;
-	internalBuffer[0] = 0;
+	memset(internalBuffer, '\0', sizeof(internalBuffer));
 
 
 	return 101;
@@ -38,7 +38,7 @@ int keyboardinit(void) {
 
 void resetKeyboard(void){
 	isReading = 0;
-	internalBuffer[0] = 0;
+	memset(internalBuffer, '\0', sizeof(internalBuffer));
 }
 
 //copies data from one buffer to the other
@@ -235,7 +235,7 @@ int kbd_read(void *buff, int bufflen) {
 	}
 	//copy data from internalBuffer (started reading when open) to appBuffer
 	copyBuffer(internalBuffer, appBuffer);
-
+	memset(internalBuffer, '\0', sizeof(internalBuffer)); //clears internal buffer
 	isReading = 1;
 
 	return 0;
@@ -254,7 +254,7 @@ int kbd_iotcl(unsigned long command, int EOFChar) {
 	case (CHANGE_EOF): //change character for EOF
 		//with int value of command to become new EOF
 		EOF_char_internal = (char)EOFChar;
-		kprintf("EOFChar:%d ", EOFChar);
+		//kprintf("EOFChar:%d ", EOFChar);
 		break;
 	case (ECHOOFF): //turn echoing off
 		keyboardEchoOn = 0;

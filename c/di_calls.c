@@ -11,7 +11,7 @@
 
 //todo: check what to do if one keyboard already open
 int di_open(int devNo) {
-	kprintf("DI_OPEN:%d ", devNo);
+	//kprintf("DI_OPEN:%d ", devNo);
 
 	//check that devNo is in range
 	//returns -1 if open fail

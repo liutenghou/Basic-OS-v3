@@ -127,7 +127,27 @@ void consumer( void ) {
 }
 
 void shell(void){
-	sysputs(">");
+	char cmdBuffer[100];
+	cmdBuffer[0]=0;
+	char currentCommand[100];
+	currentCommand[0]=0;
+
+
+
+	int fd_keyboard_Echo = sysopen(KEYBOARD_ECHO);
+
+	while(strcmp(currentCommand, "ex")!=0){
+
+		sysputs(">");
+		sysread(fd_keyboard_Echo, cmdBuffer, sizeof(cmdBuffer));
+		//note strcpy(dest, source)
+		strcpy(currentCommand, cmdBuffer);
+		memset(cmdBuffer, '\0', sizeof(cmdBuffer));
+		sysputs(currentCommand);
+
+	}
+	sysstop();
+
 
 }
 
@@ -137,15 +157,16 @@ void     root( void ) {
     char  UNBuff[100];
     char PWBuff[100];
     int successfulLogin = 0;
-    int pids[5];
-    int proc_pid, con_pid;
-    int i;
 
     sysputs("Welcome to Xeros - an experimental OS\n");
 
+
 	while(!successfulLogin){
+		memset(UNBuff, '\0', sizeof(UNBuff));
+		memset(PWBuff, '\0', sizeof(UNBuff));
+
 		int fd_keyboardNoEcho = sysopen(KEYBOARD_NOECHO); //opens keyboard
-		kprintf("filesdescriptor:%d \n", fd_keyboardNoEcho);
+		//kprintf("filesdescriptor:%d \n", fd_keyboardNoEcho);
 		sysioctl(fd_keyboardNoEcho, ECHOON);
 
 
@@ -162,11 +183,16 @@ void     root( void ) {
 		if((strcmp(UNBuff,"cs415")==0) && (strcmp(PWBuff, "EveryoneGetsAnA")==0)){
 			sysputs("\nLogin Successful\n");
 			successfulLogin = 1;
+		}else{
+			sysputs(PWBuff); //check
+			sysputs("\nInvalid Credentials\n");
 		}
 	}
 
 	//create the shell program
 	int shellPID = syscreate(&shell, 1024);
+//		sysyield();
+
 
 
 
