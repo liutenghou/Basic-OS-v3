@@ -165,7 +165,7 @@ void shell(void){
 			sysgetcputimes(&pstat);
 			int i;
 			for(i=0; i<sizeof(pstat.pid);i++){
-				if(pstat.cpuTime[i] != 0){
+				if((pstat.pid[i] != 0)||(pstat.status[i]==STATE_READY)){ //lots of pid 0s, not sure why
 					switch(pstat.status[i]){
 
 						case(1):
@@ -179,7 +179,7 @@ void shell(void){
 						break;
 					}
 
-					kprintf("%d	   %s	 %d\n",pstat.pid[i], stateString, pstat.cpuTime[i]);
+					kprintf("%d	%s	%d\n",pstat.pid[i], stateString, pstat.cpuTime[i]);
 				}
 			}
 		}
