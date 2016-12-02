@@ -126,29 +126,49 @@ void consumer( void ) {
     sysstop();
 }
 
+void shell(void){
+	sysputs(">");
+
+}
+
 void     root( void ) {
 /****************************/
 
-    char  buff[100];
+    char  UNBuff[100];
+    char PWBuff[100];
+    int successfulLogin = 0;
     int pids[5];
     int proc_pid, con_pid;
     int i;
 
     sysputs("Welcome to Xeros - an experimental OS\n");
 
-    //TODO: open no echo keyboard
-    int fd_keyboardNOecho = sysopen(KEYBOARD_NOECHO);
-    kprintf("filesdescriptor:%d \n", fd_keyboardNOecho);
-    sysioctl(fd_keyboardNOecho, ECHOON);
+	while(!successfulLogin){
+		int fd_keyboardNoEcho = sysopen(KEYBOARD_NOECHO); //opens keyboard
+		kprintf("filesdescriptor:%d \n", fd_keyboardNoEcho);
+		sysioctl(fd_keyboardNoEcho, ECHOON);
 
 
-    //close no echo keyboard
-    //turn echo on in no echo keyboard
-    sysputs("Username:");
-    sysread(fd_keyboardNOecho, buff, sizeof(buff));
-    if(strcmp(buff,"cs415")==0){
-    	sysputs("username match\n");
-    }
+		//close no echo keyboard
+		//turn echo on in no echo keyboard
+		sysputs("Username:");
+		sysread(fd_keyboardNoEcho, UNBuff, sizeof(UNBuff));
+
+		sysioctl(fd_keyboardNoEcho, ECHOOFF);
+		sysputs("Password:");
+		sysread(fd_keyboardNoEcho, PWBuff, sizeof(PWBuff));
+		//sysputs(PWBuff);
+		sysclose(fd_keyboardNoEcho); //closes keyboard
+		if((strcmp(UNBuff,"cs415")==0) && (strcmp(PWBuff, "EveryoneGetsAnA")==0)){
+			sysputs("\nLogin Successful\n");
+			successfulLogin = 1;
+		}
+	}
+
+	//create the shell program
+	int shellPID = syscreate(&shell, 1024);
+
+
 
 
 //    sysputs("buff: ");

@@ -121,7 +121,7 @@ void keyboard_print(void) {
 		if(isOpen && (isReading==0)){
 			//if enter or control-d pressed, done
 			if((int)c_actual == ENTER){
-				kprintf("OP ");
+				//kprintf("OP ");
 
 				//copyBuffer(internalBuffer, appBuffer);
 				//if enter is pressed, also add \n to output
@@ -150,7 +150,7 @@ void keyboard_print(void) {
 		}else if(isReading){//save chars to app buffer, do this when we do read
 			//if enter or control-d pressed, done
 			if((int)c_actual == ENTER){
-				kprintf("RD ");
+				//kprintf("RD ");
 
 				//copyBuffer(internalBuffer, appBuffer);
 				//if enter is pressed, also add \n to output
