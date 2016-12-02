@@ -4,7 +4,7 @@
 #define INTERNAL_BUFFER_LENGTH 4
 //char buff[4]; //I don't know why this is necessary
 int isReading;
-
+char *appBuffer;
 
 char internalBuffer[INTERNAL_BUFFER_LENGTH];
 
@@ -25,7 +25,7 @@ int keyboardinit(void) {
 	keyboardEchoOn = 0;
 	//memset(buff, 0, sizeof(buff));
 	isReading = 0;
-	memset(internalBuffer, 0, sizeof(internalBuffer));
+	internalBuffer[0] = 0;
 
 	return 101;
 }
@@ -33,7 +33,7 @@ int keyboardinit(void) {
 void resetKeyboard(void){
 	//memset(buff, 0, sizeof(buff));
 	isReading = 0;
-	memset(internalBuffer, 0, sizeof(internalBuffer));
+	internalBuffer[0] = 0;
 }
 
 //TODO: only one keyboard allowed to be opened at a time
@@ -53,27 +53,40 @@ void keyboard_print(void) {
 
 		//todo: save chars to buffer
 		if(isReading){
+
 			//if enter or control-d pressed, done
 			if((int)c_actual == ENTER){
 				kprintf("ENTER ");
+				int i;
+				for(i=0; i<INTERNAL_BUFFER_LENGTH; i++){
+					appBuffer[i] = internalBuffer[i];
+				}
+				//todo:if enter is pressed, also add \n to output
+				ready(getReadingProcess());
+
 				resetKeyboard();
 				kbd_close();
 			}else if((int)c_actual == CONTROL_D){
 				//close the keyboard
 				kprintf("CONTROL_D ");
+				int i;
+				for(i=0; i<INTERNAL_BUFFER_LENGTH; i++){
+					appBuffer[i] = internalBuffer[i];
+				}
+				ready(getReadingProcess());
 				kbd_close();
 				resetKeyboard();
-			}
-
-
-			//save keystrokes to buffer
-			int i;
-			for(i=0; i<INTERNAL_BUFFER_LENGTH;i++){
-				if(!internalBuffer[i]){
-					internalBuffer[i] = c_actual;
+			}else{
+				//save keystrokes to buffer
+				int i;
+				for(i=0; i<INTERNAL_BUFFER_LENGTH;i++){
+					if(internalBuffer[i] == 0){
+						kprintf("r:%c ", c_actual);
+						internalBuffer[i] = c_actual;
+						break;
+					}
 				}
 			}
-
 		}
 
 	}
@@ -114,10 +127,10 @@ int kbd_close() {
 
 int kbd_read(void *buff, int bufflen) {
 	kprintf("kbd_read ");
-	char *buffer = (char*)buff;
+	appBuffer = (char*)buff;
 	int i;
 	for(i=0; i<INTERNAL_BUFFER_LENGTH;i++){
-		internalBuffer[i] = buffer[i];
+		appBuffer[i]=internalBuffer[i];
 	}
 
 	isReading = 1;

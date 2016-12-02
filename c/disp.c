@@ -10,6 +10,7 @@ static int kill(pcb *currP, int pid);
 
 static pcb *head = NULL;
 static pcb *tail = NULL;
+pcb *readingProcess;
 
 pcb *p;
 
@@ -32,6 +33,7 @@ void dispatch(void) {
 
 	void *buff;
 	int bufflen;
+
 
 	for (p = next(); p;) {
 		//      kprintf("Process %x selected stck %x\n", p, p->esp);
@@ -112,6 +114,10 @@ void dispatch(void) {
 			p->ret = di_read(fd, buff, bufflen);
 
 			//must block process until: 1) bufflen reached, 2) enter pressed
+			//TODO: start back here
+			readingProcess = p;
+			p = next();
+			//if no processes in p queue,
 
 			break;
 		case (SYS_IOCTL):
@@ -143,6 +149,10 @@ void dispatch(void) {
 
 	for (;;)
 		;
+}
+
+pcb* getReadingProcess(){
+	return readingProcess;
 }
 
 extern void dispatchinit(void) {

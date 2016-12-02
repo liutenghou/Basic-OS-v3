@@ -211,7 +211,7 @@ int di_close(int fd);
 int di_write(int fd, void *buff, int bufflen);
 int di_read(int fd, void *buff, int bufflen);
 int di_ioctl(int fd, unsigned long command, int EOFChar);
-
+pcb* getReadingProcess(void);
 
 //signals kernel side
 int sighandler(int signal, void (*newhandler)(void *),
