@@ -12,6 +12,7 @@
 #define ENTER		0xa
 
 
+
 /* scan state flags */
 #define INCTL           0x01    /* control key is down          */
 #define INSHIFT         0x02    /* shift key is down            */
@@ -60,3 +61,4 @@ void resetKeyboard(void);
 int kbd_read(void *buff, int bufflen);
 int kbd_write(void *buff, int bufflen);
 int kbd_iotcl(unsigned long command, int EOFChar);
+void copyBuffer(char* sourceBuffer, char* destinationBuffer);

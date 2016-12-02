@@ -5,6 +5,7 @@
 //char buff[4]; //I don't know why this is necessary
 int isReading;
 char *appBuffer;
+char EOF_char_internal = (char)CONTROL_D;
 
 char internalBuffer[INTERNAL_BUFFER_LENGTH];
 
@@ -36,6 +37,26 @@ void resetKeyboard(void){
 	internalBuffer[0] = 0;
 }
 
+//copies data from one buffer to the other
+void copyBuffer(char* sourceBuffer, char* destinationBuffer){
+	int shorterLength;
+	if(sizeof(sourceBuffer)<sizeof(destinationBuffer)){
+		shorterLength = sizeof(sourceBuffer);
+	}else{
+		shorterLength = sizeof(destinationBuffer);
+	}
+	int i;
+	for(i=0; i<shorterLength; i++){
+		destinationBuffer[i] = sourceBuffer[i];
+	}
+}
+
+//concatenates data from internal buffer to application buffer
+void concatInternalToAppBuffer(void){
+//TODO: continue here
+
+}
+
 //TODO: only one keyboard allowed to be opened at a time
 void keyboard_print(void) {
 	//read inb(ADDR) & outb(ADDR, val)
@@ -48,31 +69,37 @@ void keyboard_print(void) {
 		unsigned char c_actual = kbtoa(c);
 		if(keyboardEchoOn){
 			//kprintf("kb:%x\n",c_actual); //this prints the hex code for the keyboard input
-			kprintf("%c", c_actual);
+			if((int)c_actual != 4){ //no control-d printing
+				//kprintf("<%c,%d>", c_actual, c_actual); //for testing
+				kprintf("%c", c_actual);
+
+			}
+
 		}
 
-		//todo: save chars to buffer
+		//todo: save chars to buffer, seems like we need to immediately copy internal buffer to
+
+
+
+
+		//application buffer when internal is full
 		if(isReading){
 
 			//if enter or control-d pressed, done
 			if((int)c_actual == ENTER){
-				kprintf("ENTER ");
-				int i;
-				for(i=0; i<INTERNAL_BUFFER_LENGTH; i++){
-					appBuffer[i] = internalBuffer[i];
-				}
+				//kprintf("ENTER ");
+
+				copyBuffer(internalBuffer, appBuffer);
 				//todo:if enter is pressed, also add \n to output
 				ready(getReadingProcess());
 
 				resetKeyboard();
 				kbd_close();
-			}else if((int)c_actual == CONTROL_D){
+			}else if((int)c_actual == EOF_char_internal){
 				//close the keyboard
-				kprintf("CONTROL_D ");
-				int i;
-				for(i=0; i<INTERNAL_BUFFER_LENGTH; i++){
-					appBuffer[i] = internalBuffer[i];
-				}
+				//kprintf("CONTROL_D ");
+
+				copyBuffer(internalBuffer, appBuffer);
 				ready(getReadingProcess());
 				kbd_close();
 				resetKeyboard();
@@ -81,7 +108,7 @@ void keyboard_print(void) {
 				int i;
 				for(i=0; i<INTERNAL_BUFFER_LENGTH;i++){
 					if(internalBuffer[i] == 0){
-						kprintf("r:%c ", c_actual);
+						//kprintf("r:%c ", c_actual);
 						internalBuffer[i] = c_actual;
 						break;
 					}
@@ -150,6 +177,7 @@ int kbd_iotcl(unsigned long command, int EOFChar) {
 
 	case (CHANGE_EOF): //change character for EOF
 		//with int value of command to become new EOF
+		EOF_char_internal = (char)EOFChar;
 		kprintf("EOFChar:%d ", EOFChar);
 		break;
 	case (ECHOOFF): //turn echoing off
