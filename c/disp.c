@@ -138,6 +138,8 @@ void dispatch(void) {
 			ap = (va_list) p->args;
 			int dest_pid = va_arg( ap, int );
 			int sig_no = va_arg(ap, int);
+			//install handler for sysstop()
+
 			p->ret = signal(dest_pid, sig_no);
 			break;
 

@@ -64,7 +64,9 @@ int wait(int PID){
 //syssigreturn never returns
 void sigtramp(void (*handler)(void*), void *cntx){
 
-
+	handler(cntx);
+	void *old_sp = cntx-sizeof(cntx);
+	sigreturn(old_sp); //sets stack pointer so that a context switch back to the target will pick up the old context
 }
 
 //internal to kernel
