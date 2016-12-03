@@ -79,13 +79,13 @@ void shell(void){
 		}else if(strcmp(currentCommand, "ex")==0){
 			break;
 		}else if(currentCommand[0] == 'k' && currentCommand[1] == ' '){
-			//sysputs("cmd:k ");
-			//TODO: implement
-			//syskill(1);
+			syssighandler(1, &sysstop, NULL);
+			syskill(currentCommand[3], 1);
 		}else if((strlen(currentCommand)==1 && currentCommand[0] == 'a')||(currentCommand[0] == 't' && currentCommand[1] == ' ')){
 			//sysputs("cmd:a ");
 			int a_pid = syscreate(&alarm, 1024);
-			syswait(a_pid);
+			syssighandler(15, &alarm, NULL);
+			syskill(2, 15);
 
 		}else if((strlen(currentCommand)==1 && currentCommand[0] == 't')||(currentCommand[0] == 't' && currentCommand[1] == ' ')){
 			//sysputs("cmd:t ");
@@ -109,8 +109,10 @@ void     root( void ) {
 
 
 	while(!successfulLogin){
+		//setup
 		memset(UNBuff, '\0', sizeof(UNBuff));
 		memset(PWBuff, '\0', sizeof(UNBuff));
+
 
 		int fd_keyboardNoEcho = sysopen(KEYBOARD_NOECHO); //opens keyboard
 		//kprintf("filesdescriptor:%d \n", fd_keyboardNoEcho);
@@ -138,6 +140,7 @@ void     root( void ) {
 
 	//create the shell program
 	int shellPID = syscreate(&shell, 1024);
+	kprintf("shellPID:%d ", shellPID);
 //		sysyield();
 
 

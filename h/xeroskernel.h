@@ -228,6 +228,7 @@ int kill(pcb *currP, int pid, int signalNumber);
 void sigtramp(void (*handler)(void*), void *cntx);
 int wait(int PID);
 int signal(int dest_pid, int sig_no);
+int syswait(int PID);
 
 /* Function prototypes for system calls as called by the application */
 int syscreate(funcptr fp, size_t stack);

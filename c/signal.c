@@ -9,7 +9,7 @@
 int sighandler(int signal, void (*newhandler)(void *),void (**oldHandler)(void *)){
 	pcb *p = getCurrentProcess();
 
-	kprintf("*SIGHANDLER*%d*%d", signal, newhandler, *oldHandler);
+	//kprintf("*SIGHANDLER*%d*%d", signal, newhandler, *oldHandler);
 	//if signal is invalid, return -1
 	if(signal < 0 || signal >= MAX_SIGNALS){
 		return -1;
@@ -46,14 +46,6 @@ void sigreturn(void *old_sp){
 }
 
 
-int wait(int PID){
-
-	return 0;
-}
-
-
-
-
 //when kernel decides to deliver a signal to a process
 //kernel modifies the application's stack so sigtramp is executed with process is
 //switched to
@@ -64,9 +56,9 @@ int wait(int PID){
 //syssigreturn never returns
 void sigtramp(void (*handler)(void*), void *cntx){
 
-	handler(cntx);
-	void *old_sp = cntx-sizeof(cntx);
-	sigreturn(old_sp); //sets stack pointer so that a context switch back to the target will pick up the old context
+	context_frame *cf = (context_frame*)cntx;
+	handler(cf);
+	//sigreturn(cf->edx); //sets stack pointer so that a context switch back to the target will pick up the old context
 }
 
 //internal to kernel
@@ -87,17 +79,18 @@ int signal(int dest_pid, int sig_no){
 
 	funcptr_signal sig_handler = dest_process->signaltable[sig_no];
 
-	unsigned int functionStack = (unsigned int)dest_process->esp;
+	char *functionStack = (char*)dest_process->esp;
 	functionStack = functionStack - sizeof(context_frame);
 	//put handler's context
 	context_frame *cf = (context_frame*)functionStack;
-	cf->ebp = functionStack;
-	cf->esp = functionStack;
+	//cf->edx = dest_process->esp;
+	cf->ebp = (unsigned long)functionStack;
+	cf->esp = (unsigned long)functionStack;
 	cf->iret_cs = getCS();
-	cf->iret_eip = &sigtramp;
+	cf->iret_eip = (unsigned long)&sigtramp;
 	cf->eflags = STARTING_EFLAGS | ARM_INTERRUPTS;
 
-	dest_process->esp = functionStack;
+	dest_process->esp = (void*)functionStack;
 
 
 
