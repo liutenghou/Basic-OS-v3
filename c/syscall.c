@@ -30,41 +30,28 @@ int syscall( int req, ... ) {
 }
 
 int syscreate( funcptr fp, size_t stack ) {
-/*********************************************/
-
     return( syscall( SYS_CREATE, fp, stack ) );
 }
 
 void sysyield( void ) {
-/***************************/
   syscall( SYS_YIELD );
 }
 
  void sysstop( void ) {
-/**************************/
-
    syscall( SYS_STOP );
 }
 
 unsigned int sysgetpid( void ) {
-/****************************/
-
     return( syscall( SYS_GETPID ) );
 }
 
 void sysputs( char *str ) {
-/********************************/
-
     syscall( SYS_PUTS, str );
 }
 
 unsigned int syssleep( unsigned int t ) {
-/*****************************/
-
     return syscall( SYS_SLEEP, t );
 }
-
-
 
 int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(void *)){
 	return syscall(SYS_SIGHANDLER, signal, newhandler, oldHandler);
