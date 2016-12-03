@@ -12,6 +12,7 @@ void alarm(void){
 	sysputs("ALARM ALARM ALARM\n");
 	//disables signal 15
 
+	sysstop();
 }
 
 void t(void){
@@ -32,15 +33,10 @@ void shell(void){
 	char option[3];
 	processStatuses pstat;
 
-/* note:
-	#define STATE_READY     1
-	#define STATE_SLEEP     22
-	#define STATE_RUNNING   23
-*/
 	char *stateString;
 
 	int fd_keyboard_Echo = sysopen(KEYBOARD_ECHO);
-	kprintf("fd_keybaordEcho:%d\n", fd_keyboard_Echo);
+	//kprintf("fd_keybaordEcho:%d\n", fd_keyboard_Echo);
 	while(strcmp(currentCommand, "ex")!=0){
 		memset(cmd, '\0', sizeof(cmd));
 		memset(option, '\0', sizeof(option));
@@ -83,11 +79,14 @@ void shell(void){
 		}else if(strcmp(currentCommand, "ex")==0){
 			break;
 		}else if(currentCommand[0] == 'k' && currentCommand[1] == ' '){
-			sysputs("cmd:k ");
+			//sysputs("cmd:k ");
 			//TODO: implement
 			//syskill(1);
 		}else if((strlen(currentCommand)==1 && currentCommand[0] == 'a')||(currentCommand[0] == 't' && currentCommand[1] == ' ')){
-			sysputs("cmd:a ");
+			//sysputs("cmd:a ");
+			int a_pid = syscreate(&alarm, 1024);
+			syswait(a_pid);
+
 		}else if((strlen(currentCommand)==1 && currentCommand[0] == 't')||(currentCommand[0] == 't' && currentCommand[1] == ' ')){
 			//sysputs("cmd:t ");
 			int t_pid = syscreate(&t, 1024);
@@ -132,7 +131,7 @@ void     root( void ) {
 			sysputs("\nLogin Successful\n");
 			successfulLogin = 1;
 		}else{
-			sysputs(PWBuff); //check
+			//sysputs(PWBuff); //check
 			sysputs("\nInvalid Credentials\n");
 		}
 	}

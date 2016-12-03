@@ -3,6 +3,10 @@
 #ifndef XEROSKERNEL_H
 #define XEROSKERNEL_H
 
+/* make sure interrupts are armed later on in the kernel development  */
+#define STARTING_EFLAGS         0x00003000
+#define ARM_INTERRUPTS          0x00000200
+
 /* Symbolic constants used throughout Xinu */
 
 typedef char Bool; /* Boolean type                  */

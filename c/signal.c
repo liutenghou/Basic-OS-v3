@@ -83,9 +83,22 @@ int signal(int dest_pid, int sig_no){
 	//note: process can signal themselves
 
 	pcb *dest_process = findPCB(dest_pid);
+
+
 	funcptr_signal sig_handler = dest_process->signaltable[sig_no];
 
-	void *savedESP = dest_process->esp;
+	unsigned int functionStack = (unsigned int)dest_process->esp;
+	functionStack = functionStack - sizeof(context_frame);
+	//put handler's context
+	context_frame *cf = (context_frame*)functionStack;
+	cf->ebp = functionStack;
+	cf->esp = functionStack;
+	cf->iret_cs = getCS();
+	cf->iret_eip = &sigtramp;
+	cf->eflags = STARTING_EFLAGS | ARM_INTERRUPTS;
+
+	dest_process->esp = functionStack;
+
 
 
 	//if a process is blocked on a syscall, when targeted to receive signal

@@ -11,6 +11,7 @@ static pcb *tail = NULL;
 
 pcb *readingProcess = NULL;
 pcb *waitingProcess = NULL;
+int waitingProcessPID = 0;
 pcb *waitingFor = NULL;
 
 pcb *p = NULL;
@@ -77,8 +78,9 @@ void dispatch(void) {
 			p = next();
 
 			//check on waiting process
-			if((waitingFor == NULL)||(waitingFor->state == STATE_STOPPED)){
+			if((waitingProcess != NULL) &&((waitingFor == NULL)||(waitingFor->state == STATE_STOPPED))){
 				ready(waitingProcess);//put waiting process back in queue if done
+				waitingProcess = NULL;
 			}
 			end_of_intr();
 			break;
@@ -86,7 +88,7 @@ void dispatch(void) {
 		case (SYS_OPEN):
 			ap = (va_list) p->args;
 			devNo = va_arg(ap, int);
-			kprintf("dispatcher devNo:%d\n", devNo);
+			//kprintf("dispatcher devNo:%d\n", devNo);
 			p->ret = di_open(devNo);
 			break;
 
@@ -142,21 +144,32 @@ void dispatch(void) {
 			int waitingForPID = va_arg(ap, int);
 			waitingFor = findPCB(waitingForPID);
 			if(waitingFor == NULL){ //there is no process that needs to be waited for
+				p->ret = -1;
 				break;
 			}else if(waitingFor->state == STATE_STOPPED){
+				p->ret = 0;
 				break;
 			}else{
+				waitingProcessPID = p->pid;
 				waitingProcess = p;
 				p=next();
+				p->ret = -2;
 			}
 			break;
 		case ( SYS_KILL):
 			ap = (va_list) p->args;
 			int dest_pid = va_arg( ap, int );
 			int sig_no = va_arg(ap, int);
+
+			if(dest_pid == waitingProcessPID){ //signal to waiting process, abort wait
+				signal(dest_pid, sig_no);
+				waitingProcess = NULL;
+			}else{
+				p->ret = signal(dest_pid, sig_no);
+			}
 			//install handler for sysstop()
 
-			p->ret = signal(dest_pid, sig_no);
+
 			break;
 
 		//-------------------------------------
