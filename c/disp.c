@@ -56,7 +56,7 @@ void dispatch(void) {
 			break;
 		case ( SYS_KILL):
 			ap = (va_list) p->args;
-			p->ret = kill(p, va_arg( ap, int ) );
+			p->ret = kill(p, va_arg( ap, int ) , va_arg(ap, int));
 			break;
 		case (SYS_CPUTIMES):
 			ap = (va_list) p->args;

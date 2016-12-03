@@ -53,13 +53,28 @@ unsigned int syssleep( unsigned int t ) {
     return syscall( SYS_SLEEP, t );
 }
 
+//syscalls A3---------------------------------------------------------------------------------------
 int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(void *)){
 	return syscall(SYS_SIGHANDLER, signal, newhandler, oldHandler);
 }
 
-int syskill(int pid) {
-  return syscall(SYS_KILL, pid);
+//used by trampoline colde
+//parameter: location on application stack of cf to switch process to
+void syssigreturn(void *old_sp){
+	syscall(SYS_SIGNRETURN, old_sp);
 }
+
+//modified for A3
+int syskill(int pid, int signalNumber) {
+  return syscall(SYS_KILL, pid, signalNumber);
+}
+
+//causes <calling process> to wait for <process with PID> to terminate
+int syswait(int PID){
+	return syscall(SYS_WAIT, PID);
+}
+//--------------------------------------------------------------------------------------------------
+
 
 int sysgetcputimes(processStatuses *ps) {
   return syscall(SYS_CPUTIMES, ps);
