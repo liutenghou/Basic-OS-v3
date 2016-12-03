@@ -69,10 +69,7 @@ int addCharToAppBuffer(char c){
 			return startIndex;
 		}
 	}
-
-
-
-	kprintf("ERROR: app buffer full ");
+	kprintf("ERROR: app buffer full\n");
 	return -1; //is full
 
 }

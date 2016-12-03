@@ -8,9 +8,12 @@
 
 static pcb *head = NULL;
 static pcb *tail = NULL;
-pcb *readingProcess;
 
-pcb *p;
+pcb *readingProcess = NULL;
+pcb *waitingProcess = NULL;
+pcb *waitingFor = NULL;
+
+pcb *p = NULL;
 
 void dispatch(void) {
 	/********************************/
@@ -72,6 +75,11 @@ void dispatch(void) {
 			p->cpuTime++;
 			ready(p);
 			p = next();
+
+			//check on waiting process
+			if((waitingFor == NULL)||(waitingFor->state == STATE_STOPPED)){
+				ready(waitingProcess);//put waiting process back in queue if done
+			}
 			end_of_intr();
 			break;
 
@@ -131,8 +139,16 @@ void dispatch(void) {
 			break;
 		case(SYS_WAIT):
 			ap = (va_list)p->args;
-			int pid = va_arg(ap, int);
-			//todo: p->ret = sigreturn(pid);
+			int waitingForPID = va_arg(ap, int);
+			waitingFor = findPCB(waitingForPID);
+			if(waitingFor == NULL){ //there is no process that needs to be waited for
+				break;
+			}else if(waitingFor->state == STATE_STOPPED){
+				break;
+			}else{
+				waitingProcess = p;
+				p=next();
+			}
 			break;
 		case ( SYS_KILL):
 			ap = (va_list) p->args;

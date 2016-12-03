@@ -62,6 +62,7 @@ void outb(unsigned int, unsigned char);
 /* Constants to track states that a process is in */
 #define STATE_STOPPED   0
 #define STATE_READY     1
+#define STATE_SIGWAIT	2
 #define STATE_SLEEP     22
 #define STATE_RUNNING   23
 

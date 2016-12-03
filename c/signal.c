@@ -70,7 +70,7 @@ void sigtramp(void (*handler)(void*), void *cntx){
 }
 
 //internal to kernel
-//registered when signal is to be registered for delivery to a process
+//called when signal is to be registered for delivery to a process
 //pid is destination pid, sign_no is signal to deliver
 int signal(int dest_pid, int sig_no){
 	if(sig_no<0 || sig_no>31){
@@ -86,6 +86,7 @@ int signal(int dest_pid, int sig_no){
 	funcptr_signal sig_handler = dest_process->signaltable[sig_no];
 
 	void *savedESP = dest_process->esp;
+
 
 	//if a process is blocked on a syscall, when targeted to receive signal
 

@@ -64,14 +64,17 @@ void shell(void){
 					switch(pstat.status[i]){
 
 						case(1):
-								stateString = "STATE_READY";
-						break;
+							stateString = "STATE_READY";
+							break;
+						case(2):
+							stateString = "STATE_SIGWAIT";
+							break;
 						case(22):
-								stateString = "STATE_SLEEP";
-						break;
+							stateString = "STATE_SLEEP";
+							break;
 						case(23):
-								stateString = "STATE_RUNNING";
-						break;
+							stateString = "STATE_RUNNING";
+							break;
 					}
 
 					kprintf("%d	%s	%d\n",pstat.pid[i], stateString, pstat.cpuTime[i]);
