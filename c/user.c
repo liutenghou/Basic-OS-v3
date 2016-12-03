@@ -127,6 +127,14 @@ void consumer( void ) {
 }
 */
 
+void t(void){
+	while(1){
+		sysputs("T\n");
+		syssleep(10000);
+	}
+	sysstop();
+}
+
 
 void shell(void){
 	char cmdBuffer[100];
@@ -165,7 +173,7 @@ void shell(void){
 			sysgetcputimes(&pstat);
 			int i;
 			for(i=0; i<sizeof(pstat.pid);i++){
-				if((pstat.pid[i] != 0)||(pstat.status[i]==STATE_READY)){ //lots of pid 0s, not sure why
+				if((pstat.pid[i]>=0)&&((pstat.pid[i] != 0)||(pstat.status[i]==STATE_READY))){ //lots of pid 0s, not sure why
 					switch(pstat.status[i]){
 
 						case(1):
@@ -182,6 +190,17 @@ void shell(void){
 					kprintf("%d	%s	%d\n",pstat.pid[i], stateString, pstat.cpuTime[i]);
 				}
 			}
+		}else if(strcmp(currentCommand, "ex")==0){
+			break;
+		}else if(currentCommand[0] == 'k' && currentCommand[1] == ' '){
+			sysputs("cmd:k ");
+			//TODO: implement
+			//syskill(1);
+		}else if((strlen(currentCommand)==1 && currentCommand[0] == 'a')||(currentCommand[0] == 't' && currentCommand[1] == ' ')){
+			sysputs("cmd:a ");
+		}else if((strlen(currentCommand)==1 && currentCommand[0] == 't')||(currentCommand[0] == 't' && currentCommand[1] == ' ')){
+			//sysputs("cmd:t ");
+			int t_pid = syscreate(&t, 1024);
 		}
 	}
 	sysclose(fd_keyboard_Echo);
