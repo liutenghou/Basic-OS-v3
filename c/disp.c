@@ -315,4 +315,67 @@ int getCPUtimes(pcb *p, processStatuses *ps) {
 	return currentSlot;
 }
 
+// This function takes 2 paramenters:
+//  currP  - a pointer into the pcbtab that identifies the currently running process
+//  pid    - the proces ID of the process to be killed.
+//
+// Note: this function needs to be augmented so that it delivers a kill signal to a
+//       a particular process. The main functionality of the this routine will remain the
+//       same except that when the process is located it needs to be put onto the readyq
+//       and a signal needs to be marked for delivery.
+//
 
+//requests that a signal be delivered to process
+//pid is receiver pid
+//return -712 if process does not exist
+//return -651 if signal number is invalid
+int kill(pcb *currP, int pid, int signalNumber) {
+	pcb * targetPCB;
+
+	kprintf("Current pid %d Killing %d\n", currP->pid, pid);
+
+	if (pid == currP->pid) {   // Trying to kill self
+		return -2;
+	}
+
+	// Don't let it kill the idle process, which from the user side
+	// of things isn't a real process
+	// IDLE process had PID 0
+
+	if (pid == 0) {
+		return -1;
+	}
+
+	if (!(targetPCB = findPCB(pid))) {
+		// kprintf("Target pid not found\n");
+		return -1;
+	}
+
+	if (targetPCB->state == STATE_STOPPED) {
+		kprintf("Target pid was stopped\n");
+		return -1;
+	}
+
+	// PCB has been found,  and the proces is either sleepign or running.
+	// based on that information remove the process from
+	// the appropriate queue/list.
+
+	if (targetPCB->state == STATE_SLEEP) {
+		// kprintf("Target pid %d sleeping\n", targetPCB->pid);
+		removeFromSleep(targetPCB);
+	}
+
+	if (targetPCB->state == STATE_READY) {
+		// remove from ready queue
+		// kprintf("Target pid %d is ready\n", targetPCB->pid);
+		removeFromReady(targetPCB);
+	}
+
+	// Check other states and do state specific cleanup before stopping
+	// the process
+	// In the new version the process will not be marked as stopped but be
+	// put onto the readyq and a signal marked for delivery.
+
+	targetPCB->state = STATE_STOPPED;
+	return 0;
+}

@@ -86,6 +86,9 @@ void outb(unsigned int, unsigned char);
 #define SYS_SIGRETURN	186
 #define SYS_WAIT		187
 
+/* A typedef for the signature of the function passed to syscreate */
+typedef void (*funcptr)(void);
+typedef void (*funcptr_signal)(void*);
 
 //pointers to functions for device
 typedef struct devsw {
@@ -111,7 +114,6 @@ typedef struct devsw {
 } device;
 
 /* Structure to track the information associated with a single process */
-
 typedef struct struct_pcb pcb;
 struct struct_pcb {
 	void *esp; /* Pointer to top of saved stack           */
@@ -131,8 +133,8 @@ struct struct_pcb {
 	unsigned int tickCount;
 	long cpuTime; /* CPU time  consumed                    */
 
-	//signals, ordered by priority
-	void* signaltable[MAX_SIGNALS]; //signal table, for what to do when a signal is sent to the process
+	//signals, ordered by priority, actual value will be the handler for the signal
+	funcptr_signal signaltable[MAX_SIGNALS]; //signal table, for what to do when a signal is sent to the process
 	//each pcb has a fixed sized file descriptor table
 	//open returns entry in fdt
 	device* fdt[MAX_DEVICES_PER_PROCESS];
@@ -184,9 +186,6 @@ void kfree(void *ptr);
 void kmeminit(void);
 void *kmalloc(size_t);
 
-/* A typedef for the signature of the function passed to syscreate */
-typedef void (*funcptr)(void);
-
 /* Internal functions for the kernel, applications must never  */
 /* call these.                                                 */
 extern pcb *findPCB(int pid);
@@ -232,8 +231,7 @@ void sysstop(void);
 unsigned int sysgetpid(void);
 unsigned int syssleep(unsigned int);
 void sysputs(char *str);
-int syssighandler(int signal, void (*newhandler)(void *),
-		void (**oldHandler)(void *));
+int syssighandler(int signal, void (*newhandler)(void *),void (**oldHandler)(void *));
 void sysputs(char *str);
 int sysgetcputimes(processStatuses *ps);
 //device drivers syscall
@@ -250,9 +248,7 @@ void keyboard_print(void);
 #define CHANGE_EOF 	53
 #define ECHOOFF		55
 #define ECHOON		56
-//signals
-int syssighandler(int signal, void (*newhandler)(void *),
-		void (**oldHandler)(void *));
+
 
 /* The initial process that the system creates and schedules */
 void root(void);
