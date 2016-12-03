@@ -83,7 +83,7 @@ void outb(unsigned int, unsigned char);
 //signals
 #define SYS_SIGHANDLER	184
 #define SYS_KEYBOARD	185
-#define SYS_SIGNRETURN	186
+#define SYS_SIGRETURN	186
 #define SYS_WAIT		187
 
 
@@ -222,8 +222,8 @@ void sigreturn(void *old_sp);
 int syskill(int pcb, int signalNumber);
 int kill(pcb *currP, int pid, int signalNumber);
 void sigtramp(void (*handler)(void*), void *cntx);
-
-
+int wait(int PID);
+int signal(int dest_pid, int sig_no);
 
 /* Function prototypes for system calls as called by the application */
 int syscreate(funcptr fp, size_t stack);

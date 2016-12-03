@@ -58,15 +58,30 @@ int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(v
 	return syscall(SYS_SIGHANDLER, signal, newhandler, oldHandler);
 }
 
-//used by trampoline colde
+//used by trampoline cold
 //parameter: location on application stack of cf to switch process to
+//calls sigreturn() in kernel
 void syssigreturn(void *old_sp){
-	syscall(SYS_SIGNRETURN, old_sp);
+	syscall(SYS_SIGRETURN, old_sp);
 }
 
 //modified for A3
+//name is not descriptive, actually sends a signal to a process
+//calls signal() in kernel
 int syskill(int pid, int signalNumber) {
-  return syscall(SYS_KILL, pid, signalNumber);
+	//do checking here
+	//returns -712 if PID is invalid
+	if(findPCB(pid) == NULL){
+		return -712;
+	}
+
+	//returns -651 if signal is invalid
+	if(signalNumber<0 || signalNumber >31){
+		return -651;
+	}
+
+	syscall(SYS_KILL, pid, signalNumber);
+	return 0;
 }
 
 //causes <calling process> to wait for <process with PID> to terminate

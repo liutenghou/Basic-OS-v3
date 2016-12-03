@@ -56,7 +56,7 @@ void shell(void){
 
 		//convert state to something human readable
 		if(strcmp(currentCommand, "ps") == 0){
-			sysputs("PID	STATE	TIME_ALIVE\n");
+			sysputs("PID	STATE		TIME_ALIVE\n");
 			sysgetcputimes(&pstat);
 			int i;
 			for(i=0; i<sizeof(pstat.pid);i++){

@@ -6,8 +6,6 @@
 #include <xeroslib.h>
 #include <stdarg.h>
 
-static int kill(pcb *currP, int pid);
-
 static pcb *head = NULL;
 static pcb *tail = NULL;
 pcb *readingProcess;
@@ -25,11 +23,6 @@ void dispatch(void) {
 	int len;
 	int devNo;
 	int fd;
-
-	//signal
-	int signal;
-	void* newhandler;
-	void* oldhandler;
 
 	void *buff;
 	int bufflen;
@@ -53,10 +46,6 @@ void dispatch(void) {
 		case ( SYS_STOP):
 			p->state = STATE_STOPPED;
 			p = next();
-			break;
-		case ( SYS_KILL):
-			ap = (va_list) p->args;
-			p->ret = kill(p, va_arg( ap, int ) , va_arg(ap, int));
 			break;
 		case (SYS_CPUTIMES):
 			ap = (va_list) p->args;
@@ -115,11 +104,8 @@ void dispatch(void) {
 			p->ret = di_read(fd, buff, bufflen);
 
 			//must block process until: 1) bufflen reached, 2) enter pressed
-			//TODO: start back here
 			readingProcess = p;
 			p = next();
-			//if no processes in p queue,
-
 			break;
 		case (SYS_IOCTL):
 			ap = (va_list) p->args;
@@ -128,15 +114,34 @@ void dispatch(void) {
 			int EOFChar = va_arg(ap, int);
 			p->ret = di_ioctl(fd, command, EOFChar);
 			break;
+		//signals------------------------------
 		case(SYS_SIGHANDLER):
 			ap = (va_list) p->args;
 			//args: signal, newhandler, oldhandler
-			signal = va_arg(ap, int);
-			newhandler = va_arg(ap, void*);
-			oldhandler = va_arg(ap, void*);
-			p->ret = sighandler(signal, newhandler, oldhandler);
+			int sig = va_arg(ap, int);
+			void *newhandler = va_arg(ap, void*);
+			void *oldhandler = va_arg(ap, void*);
+			p->ret = sighandler(sig, newhandler, oldhandler);
 
 			break;
+		case(SYS_SIGRETURN):
+			ap = (va_list)p->args;
+			void *old_sp = va_arg(ap, void*);
+			sigreturn(old_sp);
+			break;
+		case(SYS_WAIT):
+			ap = (va_list)p->args;
+			int pid = va_arg(ap, int);
+			//todo: p->ret = sigreturn(pid);
+			break;
+		case ( SYS_KILL):
+			ap = (va_list) p->args;
+			int dest_pid = va_arg( ap, int );
+			int sig_no = va_arg(ap, int);
+			p->ret = signal(dest_pid, sig_no);
+			break;
+
+		//-------------------------------------
 		case(SYS_KEYBOARD):
 			keyboard_print();
 			end_of_intr();
@@ -269,67 +274,6 @@ void removeFromReady(pcb * p) {
 
 		}
 	}
-}
-
-// This function takes 2 paramenters:
-//  currP  - a pointer into the pcbtab that identifies the currently running process
-//  pid    - the proces ID of the process to be killed.
-//
-// Note: this function needs to be augmented so that it delivers a kill signal to a 
-//       a particular process. The main functionality of the this routine will remain the 
-//       same except that when the process is located it needs to be put onto the readyq
-//       and a signal needs to be marked for delivery. 
-//
-
-static int kill(pcb *currP, int pid) {
-	pcb * targetPCB;
-
-	kprintf("Current pid %d Killing %d\n", currP->pid, pid);
-
-	if (pid == currP->pid) {   // Trying to kill self
-		return -2;
-	}
-
-	// Don't let it kill the idle process, which from the user side
-	// of things isn't a real process
-	// IDLE process had PID 0
-
-	if (pid == 0) {
-		return -1;
-	}
-
-	if (!(targetPCB = findPCB(pid))) {
-		// kprintf("Target pid not found\n");
-		return -1;
-	}
-
-	if (targetPCB->state == STATE_STOPPED) {
-		kprintf("Target pid was stopped\n");
-		return -1;
-	}
-
-	// PCB has been found,  and the proces is either sleepign or running.
-	// based on that information remove the process from
-	// the appropriate queue/list.
-
-	if (targetPCB->state == STATE_SLEEP) {
-		// kprintf("Target pid %d sleeping\n", targetPCB->pid);
-		removeFromSleep(targetPCB);
-	}
-
-	if (targetPCB->state == STATE_READY) {
-		// remove from ready queue
-		// kprintf("Target pid %d is ready\n", targetPCB->pid);
-		removeFromReady(targetPCB);
-	}
-
-	// Check other states and do state specific cleanup before stopping
-	// the process
-	// In the new version the process will not be marked as stopped but be
-	// put onto the readyq and a signal marked for delivery.
-
-	targetPCB->state = STATE_STOPPED;
-	return 0;
 }
 
 // This function is the system side of the sysgetcputimes call.

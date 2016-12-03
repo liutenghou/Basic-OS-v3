@@ -92,7 +92,7 @@ int create( funcptr fp, size_t stackSize ) {
     p->validProcess = 1010101;
     memset(p->fdt, 0, sizeof(p->fdt));
     //initialize signal table
-    memset(p->signaltable, 0, sizeof(p->signaltable));
+    memset(p->signaltable, '\0', sizeof(p->signaltable));
 
     ready( p );
     return p->pid;

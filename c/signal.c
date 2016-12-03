@@ -33,13 +33,22 @@ int sighandler(int signal, void (*newhandler)(void *), void (** oldhandler)(void
 	return 0;
 }
 
-//replace stack pointer in this process's PCB with old_sp
+
 //retrieve old return value
-//indicate signal can be delivered again
 void sigreturn(void *old_sp){
+	//replace stack pointer in this process's PCB with old_sp
+	pcb *p = getCurrentProcess();
+	//indicate signal can be delivered again
+	memset(p->signaltable, '\0', sizeof(p->signaltable));
+
+	p->esp = old_sp;
+
+}
 
 
+int wait(int PID){
 
+	return 0;
 }
 
 
@@ -124,8 +133,19 @@ void sigtramp(void (*handler)(void*), void *cntx){
 
 //internal to kernel
 //registered when signal is to be registered for delivery to a process
+//pid is destination pid, sign_no is signal to deliver
+int signal(int dest_pid, int sig_no){
 
-int signal(int pid, int sig_no){
+	//processes can signal themselves
+
+	//if a process is blocked on a syscall, when targeted to receive signal
+
+	//target is unblocked
+	//return error to syscall -362
+
+
+	//first process signal
+	//remember value for context switch corresponding to system call return
 
 	return 0;
 }
