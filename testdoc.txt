@@ -1,17 +1,13 @@
+tests are commented out in user.c under: testdoc.txt tests
+
 • 1. Test showing prioritization of signals 
 signals are prioritized by their order in the signaltable within the pcb
 
 • 2. syssighandler() test case
 
-
-
 • 3. syskill() test case
 
-
-
 • 4. syssigwait() test case
-
-
 
 • 5. sysopen() with invalid arguments
 code:
@@ -38,4 +34,10 @@ ioctl invalid arguments
 • 8. sysread() when there are more characters buffered in kernel than the read requests 
 
 
-• 9. Two test cases for scenarios not covered here or in the test program.
+• 9. Invalid Login
+if User logs in without the correct credentials. The output will be:
+Invalid Credentials
+
+• 10. open two keyboards simultaneously:
+if one keyboard is already open, error output will be:
+ERROR di_open: Keyboard Already Open

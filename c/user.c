@@ -107,7 +107,8 @@ void     root( void ) {
 
     sysputs("Welcome to Xeros - an experimental OS\n");
 
-    //testdoc.txt tests
+    /*
+    //!!!!!!!!!!!!testdoc.txt tests
     sysputs("START TEST\n");
     char testBuff[100];
     char testBuff2[100];
@@ -116,12 +117,11 @@ void     root( void ) {
     sysioctl(-1, -1, -1);
     int testFD = sysopen(KEYBOARD_NOECHO);
 
-//    sysread(testFD, testBuff2, sizeof(testBuff2));
-//    sysputs(testBuff2);
     sysclose(testFD);
 
-
     sysputs("DONE TEST\n");
+     //!!!!!!!!!!!!end testdoc.txt tests
+     */
 
 	while(!successfulLogin){
 		//setup
