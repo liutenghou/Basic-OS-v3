@@ -5,12 +5,17 @@
 //for all below, must call corresponding dv functions
 
 //device drivers
-
+int keyboardOpen = 0;
 
 //argument: devNo: major device number, index into device table
 
 //todo: check what to do if one keyboard already open
 int di_open(int devNo) {
+	if(keyboardOpen == 1){
+		kprintf("ERROR di_open: Keyboard Already Open\n");
+		return -2;
+	}
+	keyboardOpen = 1;
 	//kprintf("DI_OPEN:%d ", devNo);
 
 	//check that devNo is in range
@@ -22,6 +27,8 @@ int di_open(int devNo) {
 	pcb *p = getCurrentProcess();
 	int i;
 	for (i = 0; i < MAX_DEVICES_PER_PROCESS; i++) {
+
+
 		if (p->fdt[i] == NULL_POINTER) {
 			p->fdt[i] = &device_table[devNo];
 			p->fdt[i]->dvopen();
@@ -32,6 +39,7 @@ int di_open(int devNo) {
 }
 
 int di_close(int fd) {
+	keyboardOpen = 0;
 
 	if (fd < 0 || fd > MAX_DEVICES_PER_PROCESS) {
 		return -1;
@@ -80,7 +88,8 @@ int di_read(int fd, void *buff, int bufflen) {
 }
 
 int di_ioctl(int fd, unsigned long command, int EOFChar) {
-	if (fd < 0 || fd > MAX_DEVICES_PER_PROCESS) {
+	if ((fd < 0 || fd > MAX_DEVICES_PER_PROCESS)||(command < 0)) {
+		kprintf("ioctl invalid arguments\n");
 		return -1;
 	}
 	pcb *p = getCurrentProcess();

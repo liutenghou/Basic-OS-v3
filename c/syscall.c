@@ -99,6 +99,10 @@ int sysgetcputimes(processStatuses *ps) {
 
 //where device_no is Major device number
 int sysopen(int device_no){
+	if(device_no != KEYBOARD_NOECHO && device_no != KEYBOARD_ECHO){
+		kprintf("sysopen error\n");
+		return -1;
+	}
 	return syscall(SYS_OPEN, device_no);
 }
 
@@ -108,9 +112,17 @@ int sysclose(int fd){
 
 
 extern int syswrite(int fd, void *buff, int bufflen){
+	if(fd < 0 || fd > 3){
+		kprintf("syswrite error\n");
+		return -1;
+	}
 	return syscall(SYS_WRITE, fd, buff, bufflen);
 }
 extern int sysread(int fd, void *buff, int bufflen){
+	if(fd < 0 || fd > 3){
+		kprintf("sysread error\n");
+		return -1;
+	}
 	//kprintf("SYSREAD ");
 	return syscall(SYS_READ, fd, buff, bufflen);
 }

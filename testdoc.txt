@@ -1,0 +1,41 @@
+• 1. Test showing prioritization of signals 
+signals are prioritized by their order in the signaltable within the pcb
+
+• 2. syssighandler() test case
+
+
+
+• 3. syskill() test case
+
+
+
+• 4. syssigwait() test case
+
+
+
+• 5. sysopen() with invalid arguments
+code:
+sysopen(3);
+
+3 is neither keyboard device, therefore error message is printed:
+sysopen error
+
+• 6. syswrite() with invalid file descriptor
+code: 
+syswrite(5, testBuff, strlen(testBuff));
+
+5 is an invalid fd number. Range should be between 0-3. so outputs:
+syswrite error
+
+• 7. sysioctl() test for invalid commands
+code:
+sysioctl(-1, -1, -1);
+
+-1 is an invalid fd and invalid command
+output:
+ioctl invalid arguments
+
+• 8. sysread() when there are more characters buffered in kernel than the read requests 
+
+
+• 9. Two test cases for scenarios not covered here or in the test program.

@@ -101,12 +101,27 @@ void shell(void){
 void     root( void ) {
 /****************************/
 
-    char  UNBuff[100];
+    char UNBuff[100];
     char PWBuff[100];
     int successfulLogin = 0;
 
     sysputs("Welcome to Xeros - an experimental OS\n");
 
+    //testdoc.txt tests
+    sysputs("START TEST\n");
+    char testBuff[100];
+    char testBuff2[100];
+    sysopen(3);
+    syswrite(5, testBuff, sizeof(testBuff));
+    sysioctl(-1, -1, -1);
+    int testFD = sysopen(KEYBOARD_NOECHO);
+
+//    sysread(testFD, testBuff2, sizeof(testBuff2));
+//    sysputs(testBuff2);
+    sysclose(testFD);
+
+
+    sysputs("DONE TEST\n");
 
 	while(!successfulLogin){
 		//setup
@@ -116,11 +131,8 @@ void     root( void ) {
 
 		int fd_keyboardNoEcho = sysopen(KEYBOARD_NOECHO); //opens keyboard
 		//kprintf("filesdescriptor:%d \n", fd_keyboardNoEcho);
-		sysioctl(fd_keyboardNoEcho, ECHOON);
+		sysioctl(fd_keyboardNoEcho, ECHOON); //turn echo on in no echo keyboard
 
-
-		//close no echo keyboard
-		//turn echo on in no echo keyboard
 		sysputs("Username:");
 		sysread(fd_keyboardNoEcho, UNBuff, sizeof(UNBuff));
 
@@ -140,7 +152,7 @@ void     root( void ) {
 
 	//create the shell program
 	int shellPID = syscreate(&shell, 1024);
-	kprintf("shellPID:%d ", shellPID);
+	//kprintf("shellPID:%d ", shellPID);
 //		sysyield();
 
 

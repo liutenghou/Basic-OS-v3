@@ -93,8 +93,8 @@ int addCharToInternalBuffer(char c){
 
 }
 
-
-//TODO: only one keyboard allowed to be opened at a time
+//this is where the keyboard is printing to the screen, called from dispatcher
+//also buffers characters and other functionality associated with character input
 void keyboard_print(void) {
 	//read inb(ADDR) & outb(ADDR, val)
 	//control information read/written to port 0x64
